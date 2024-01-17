@@ -11,7 +11,7 @@ end
 
 fprintf('\n project directory now added to the current path \n')
 
-addpath([ rootdir '/_tools/fieldtrip-master'])
+addpath([ rootdir '/_external/fieldtrip-master'])
 if ~exist(fileparts(which('ft_defaults.m')))
     fprintf('remember to add fieldtrip to you path! \n')
 end
@@ -23,8 +23,8 @@ addpath(fullfile('_eeg/'))
 addpath (fullfile('_eeg/_preproc'))
 addpath (fullfile('_eeg/_func'))
 addpath (fullfile('_eeg/_analysis'))
-addpath (fullfile('_tools/cbrewer/cbrewer'))
-addpath (fullfile('_tools'))
+addpath (fullfile('_external/cbrewer/cbrewer'))
+addpath (fullfile('_external'))
 
 fprintf('\n directory addded to the path')
 

@@ -1,5 +1,5 @@
 
-function ABR_par(datadir,d,dd)
+function data = ABR_preproc(datadir,d,dd)
 %% Preprocessing of click ABR for 9/s and 40/s conditions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   outputs data.mat of ABR trials and saves to _preprocABR folder for
@@ -97,15 +97,7 @@ if ~isempty(bdf) || strcmp(d(dd).name,'UH091') || strcmp(d(dd).name,'UH067') %no
         data = ft_resampledata(cfgres, data);
     end
 
-    cd(datadir)
-    cd ..
-    % save to folder
-    cd(['_EEG' filesep '_preprocdata_ABR'])
-    %%  Save mat
-    savefile = [d(dd).name '_ABR.mat'];
-    save(savefile,'data','-v7.3');
-    % back to root
-    cd(rootdir)
+
 else
 % no data for this subjet
 warning(['No data for subject ' d(dd).name])
