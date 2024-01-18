@@ -1,0 +1,33 @@
+{Error using distcomp.remoteparfor/rebuildParforController (line 194)
+All workers aborted during execution of the parfor loop.
+
+Error in distcomp.remoteparfor/handleIntervalErrorResult (line 258)
+                obj.rebuildParforController();
+
+Error in distcomp.remoteparfor/getCompleteIntervals (line 395)
+                            [r, err] = obj.handleIntervalErrorResult(r);
+
+Error in run_ABR_preproc (line 23)
+parfor dd=1:length(d)
+} 
+{The client lost connection to worker 1. This might be due to network problems,
+or the interactive communicating job might have errored.
+} 
+{Error using butter (line 83)
+butter: critical frequencies must be in (0 1)
+
+Error in ft_preproc_lowpassfilter (line 151)
+    [B, A] = butter(N, max(Flp)/Fn);
+
+Error in preproc (line 325)
+  if strcmp(cfg.lpfilter, 'yes'),     dat = ft_preproc_lowpassfilter(dat, fsample, cfg.lpfreq, cfg.lpfiltord, cfg.lpfilttype, cfg.lpfiltdir, cfg.lpinstabilityfix, cfg.lpfiltdf, cfg.lpfiltwintype, cfg.lpfiltdev, cfg.plotfiltresp, cfg.usefftfilt); end
+
+Error in ft_preprocessing (line 595)
+      [cutdat{i}, label, time{i}, cfg] = preproc(dat, hdr.label(rawindx), tim, cfg, begpadding, endpadding);
+
+Error in ABR_preproc (line 90)
+    data = ft_preprocessing(cfg);
+
+Error in run_ABR_preproc (line 23)
+parfor dd=1:length(d)
+} 

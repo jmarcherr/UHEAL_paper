@@ -17,16 +17,16 @@ if ~exist(fileparts(which('ft_defaults.m')))
 end
 
 
+% add project paths
+addpath(genpath(fullfile('_eeg/')))
 
-addpath(fullfile('_eeg/'))
-%addpath(fullfile('_func/'))
-addpath (fullfile('_eeg/_preproc'))
-addpath (fullfile('_eeg/_func'))
-addpath (fullfile('_eeg/_analysis'))
 addpath (fullfile('_external/cbrewer/cbrewer'))
 addpath (fullfile('_external'))
 
 fprintf('\n directory addded to the path')
-
+% Determine where your m-file's folder is.
+%folder = fileparts(which(mfilename)); 
+% Add that folder plus all subfolders to the path.
+%addpath(genpath(folder));
 
 

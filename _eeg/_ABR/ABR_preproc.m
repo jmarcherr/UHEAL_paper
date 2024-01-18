@@ -96,16 +96,21 @@ if ~isempty(bdf) || strcmp(d(dd).name,'UH091') || strcmp(d(dd).name,'UH067') %no
         cfgres.detrend    = 'no';
         data = ft_resampledata(cfgres, data);
     end
+    
+    % add stimear
+    data.stimear = stimear;
+    data.subid = d(dd).name(1:5);
+    data.subinfo = dataalm.subinfo;
 
-
+    
 else
 % no data for this subjet
 warning(['No data for subject ' d(dd).name])
 %back to root
+
+end
 cd(rootdir)
 end
-end
-
 
 
 
