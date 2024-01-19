@@ -1,85 +1,79 @@
 
-function data = ABR_preproc(datadir,d,dd)
+function data = ABR_preproc(dataset_root,subid)
 %% Preprocessing of click ABR for 9/s and 40/s conditions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   outputs data.mat of ABR trials and saves to _preprocABR folder for
-%   subsequent analysis
-%   Inputs:
-%   datadir = directory with subject preprocessed data (UHEAL_scaper)
-%   d = structure of UHEAL data
-%   dd = currect subject nr.
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% define root and data directories
-rootdir = cd;
-cd(datadir)
-cd(d(dd).name)
+%   Inputs:
+%       dataset_root = directory with subject preprocessed data
+%       subid = UHEAL data identifyer
+%    Outputs:
+%        Preprocessed ABR data
 
-% get BDF name of subject dd
-bdf = dir('*.bdf')
-if ~isempty(bdf) || strcmp(d(dd).name,'UH091') || strcmp(d(dd).name,'UH067') %no ABR for subjects 91 and 67
-    dataset = bdf.name;
-    % load stim file
-    stim_file = [];
-    stim_file = dir('click_abr_stim*');
-    if ~isempty(stim_file)
-        load(stim_file.name);
-        % Get stim ear
-        stimear = stim.ear(1);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if nargin < 1 || isempty(dataset_root); dataset_root = '/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/'; end
+if nargin < 2 || isempty(subid); error('Please provide subject identifier'); end
+
+try
+    % load subject info for this participant
+    filename_subjectdir = dir(fullfile([dataset_root filesep 'scraped' filesep subid '.mat']));
+    if isempty(filename_subjectdir)
+        error(sprintf('Subject data is not available for subject indentifier %s.',subid))
     end
 
-    % load dataalm for this participant
-    cd ..
-    cd('scraped')
-    load([d(dd).name '.mat'])
-    eeg_lab = dataalm.subinfo.lab;
+    load([dataset_root filesep 'scraped' filesep subid '.mat']);
 
-    % back to datadir
-    cd(datadir)
-    % Subject dir
-    cd(d(dd).name)
-    %% ------------Event extraction --------------------------------------
+    % load stim ear
+    stimfile_name = dir(fullfile(dataset_root,subid,'click_abr_stim*'));
+    if ~isempty(stimfile_name)
+        load(fullfile(stimfile_name.folder, stimfile_name.name));
+        stimear = stim.ear(1);
+    else
+        % could not get stimear
+        warning(sprintf('stimulus ear could not be identified for subject %s',subid));
+        stimear = nan;
+    end
+
+    % get BDF name of subject dd
+    filename_bdf = dir(fullfile(dataset_root,subid,'*.bdf'));
+
+    if ~isempty(filename_bdf) && sum(strcmp(subid,{'UH003','UH031','UH067','UH091'})) %no ABR for subjects 3,31,67 and 91
+        error(sprintf('ABR data is not available for subject indentifier %s',subid))
+    end
+
+    filename_bdf = fullfile(filename_bdf.folder , filename_bdf.name);
+
+    % Triggers indicate stimulus onset
     triggers = [50,60,62]; % 50 = 9.1/s, [60,62] = 40/s.
+    hdr = ft_read_header(filename_bdf);
 
-
-    hdr = ft_read_header(dataset);
     cfg=[];
     cfg.layout =  'biosemi64.lay';
     cfg.continuous = 'yes';
     cfg.channel     = 'all';
-    cfg.dataset = dataset;
+    cfg.dataset = filename_bdf;
     cfg.trialdef.eventtype    = 'STATUS';
     cfg.trialdef.eventvalue   = triggers;
     cfg.trialdef.prestim      = 10e-3; %10 ms
     cfg.trialdef.poststim     = 20e-3; %20 ms
     cfg = ft_definetrial(cfg);
 
-    % redefine trigger values
+    % Redefine trigger values
     for tt=1:length(triggers)
         cfg.trl(cfg.trl(:,4)==triggers(tt),4) = tt;
     end
 
-    %% Rereferencing (Cz, Fz, FCz)
-
-    cfg.dataset = dataset;
+    % Rereferencing (Cz, Fz, FCz)
     cfg.channel     = {'eeg','EXG1','EXG2' '-Status'};%chaoi;;%chaoi;
     cfg.reref       = 'yes';
     cfg.refchannel = {'Cz','Fz','FCz'};
     cfg.layout      =  'biosemi64.lay';
     cfg.continuous  = 'yes';
-    % line noise filter
     cfg.dftfilter   = 'yes';
     cfg.dftfreq     = [50 100  150];
-    % low-pass filter
     cfg.lpfilttype  = 'but';
     cfg.lpfilter    = 'yes';
     cfg.lpfiltord   = 2;
-    if dd==31 || dd==3 % recorded with 2048 fs
-        cfg.lpfreq      = 1000;%3000;
-    else
-        cfg.lpfreq      = 3000;
-    end
-    % high-pass filter
+    cfg.lpfreq      = 3000;
     cfg.hpfilter    = 'yes';
     cfg.hpfilttype  = 'but';
     cfg.hpfreq      = 100;
@@ -89,27 +83,19 @@ if ~isempty(bdf) || strcmp(d(dd).name,'UH091') || strcmp(d(dd).name,'UH067') %no
     % rereferenced data struct
     data = ft_preprocessing(cfg);
 
-    % Resample to 16 kHz
-    if dd==31 || dd==3 % recorded with 2048 fs
-        cfgres = [];
-        cfgres.resamplefs = 16384;
-        cfgres.detrend    = 'no';
-        data = ft_resampledata(cfgres, data);
-    end
-    
     % add stimear
     data.stimear = stimear;
-    data.subid = d(dd).name(1:5);
+    data.subid = subid;
     data.subinfo = dataalm.subinfo;
 
-    
-else
-% no data for this subjet
-warning(['No data for subject ' d(dd).name])
-%back to root
+catch ME
+    %No data for current subject
 
+    warning(ME.message)
+    data.error = ['error in ABR_preproc: ' ME.message];
+    data.subid = subid;
+    data.subinfo = dataalm.subinfo;
 end
-cd(rootdir)
 end
 
 

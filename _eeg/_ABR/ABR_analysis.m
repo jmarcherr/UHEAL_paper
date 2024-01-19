@@ -6,7 +6,13 @@ function data_abr = ABR_analysis(data)
 % trials
 %cd(fileparts(matlab.desktop.editor.getActiveFilename))
 try
-
+    % check data
+    if nargin < 1 ; error('No iput. Please provide data from ABR_preproc'); end
+    
+    if ~isfield(data,'hdr')
+        error(['No processed ABR data for subject ' data.subid])
+    end
+    
     %find reference chan
     if data.stimear == 1 % left ear stimulation
         chans = find(strcmp(data.label,'EXG1')); % left tiptrode
@@ -16,12 +22,7 @@ try
 
     % not tiptrode channels. Reject subject
     if isempty(chans)
-        %% save processed ABR
-        data_abr = struct;
-        data_abr.subid = data.subid;
-        data_abr.subinfo = data.subinfo;
-        data_abr.stimear = data.stimear;
-        data_abr.abr = [];
+       error('catch');
     else
 
         %% ------------Comments --------------------------------------
@@ -31,6 +32,7 @@ try
         trial_info = unique(data.trialinfo);
 
         % loop over rates (9/s and 40/s)
+        rate_ids = [9,40];
         rate = 1:2;
         for kk=[rate] % condition loop
 
@@ -54,6 +56,7 @@ try
             data_cc = [];
             % reject if less than half the trials remain
             if length(valid_trials)<3000
+                warning(['Less than half of trials are clean. Rejecting ' rateids(kk) '/s data from subject' data.subid])
                 data_cc = nan;
             else
                 data_cc = epoched_data(valid_trials,:,:);
@@ -83,11 +86,16 @@ try
         data_abr.nr_reject = nr_reject*100;
 
 
-    end    %%
-catch
-    warning(['no data processed for subject ' data.subid])
+    end   
+catch ME
+    warning(ME.message)
+    data_abr = struct;
+    data_abr.error = ['Error in ABR_analysis: ' ME.message];
+    data_abr.subid = data.subid;
+    data_abr.subinfo = data.subinfo;
+
 end
 clc
-disp(['... abr data processed for subject ' data.subid])
+disp(['ABR data processed for subject ' data.subid])
 end
 
