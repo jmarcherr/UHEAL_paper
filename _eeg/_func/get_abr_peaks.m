@@ -2,7 +2,7 @@ function [abr_peaks] = get_abr_peaks(data_in,t_abr)
 %find ABR peaks automatic
 
 ap_peak = find(t_abr>0e-3 & t_abr<2.3e-3);
-wv_peak = find(t_abr>4e-3 & t_abr<7e-3);
+wv_peak = find(t_abr>3.5e-3 & t_abr<9e-3); % 4-7 ms before
 %sp_peak = find(t_abr>0e-3 & t_abr<.7e-3);
 
 if ~isempty(data_in)

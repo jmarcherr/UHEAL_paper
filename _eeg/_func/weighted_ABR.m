@@ -19,16 +19,14 @@ function [data_w,data_trials] = weighted_ABR(data,data_cc,tidx)
                 end
             end
         end
-        
-        % Concat channels        
-        catdata = [];
-        for cc=1:size(data_cc,1)
-                catdata =[catdata -squeeze(data_weighted(cc,:,:))]; %(inverting channel)
-        end
-        
+
+        % Correct channels
+        corrdata =-squeeze(data_weighted(cc,:,:)); %(inverting channel)
+
+
         epoch_var = epoch_var(:);
-        summed_trials =sum(catdata,2);
+        summed_trials =sum(corrdata,2);
         summed_weights = sum(epoch_var);
         data_w = summed_trials./summed_weights;
-        data_trials = catdata./epoch_var';
+        data_trials = corrdata./epoch_var';
 end

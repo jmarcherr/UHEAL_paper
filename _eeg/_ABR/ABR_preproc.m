@@ -63,7 +63,7 @@ try
     end
 
     % Rereferencing (Cz, Fz, FCz)
-    cfg.channel     = {'eeg','EXG1','EXG2' '-Status'};%chaoi;;%chaoi;
+    cfg.channel     = {'eeg','EXG1','EXG2' '-Status'};
     cfg.reref       = 'yes';
     cfg.refchannel = {'Cz','Fz','FCz'};
     cfg.layout      =  'biosemi64.lay';

@@ -1,8 +1,9 @@
-
+*.asv
 *.m~
 .DS_Store
 *.mat
 UHEAL_data
 _bsub/bjob_log
+_eeg/_ABR/_bash/log
 
 .Rproj.user
