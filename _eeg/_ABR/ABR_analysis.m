@@ -72,6 +72,8 @@ try
             %% delay, baseline correction
             [data_weighted{kk},data_trials{kk},time_corrected{kk},tidx_corrected{kk}] = ABR_correction(data_weighted{kk},data_trials{kk},time,tidx,data.fsample,data.subid);
 
+            %% find peaks
+            [abr_peaks{kk}] = get_abr_peaks(data_weighted{kk},time_corrected{kk});
         end
         %% save processed ABR
         data_abr = struct;
@@ -83,6 +85,7 @@ try
         data_abr.time = time_corrected;
         data_abr.tidx = tidx_corrected;
         data_abr.fs = data.fsample;
+        data_abr.abr_peaks = abr_peaks;
         data_abr.nr_reject = nr_reject*100;
 
 

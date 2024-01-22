@@ -13,7 +13,7 @@ tn = time(tidx)-delay;
 rjt_ids= setdiff(1:20,2);
 
 %% correction for AD break
-if ~setdiff(str2num(subid(3:end)),rjt_ids)
+if isempty(setdiff(str2num(subid(3:end)),rjt_ids))
 data_out = data_in(1:end-13);
 data_out_trials = data_in_trials(1:end-13,:);
 else

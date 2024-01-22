@@ -1,0 +1,25 @@
+Terminated
+{Operation terminated by user during distcomp.remoteparfor/getCompleteIntervals (line 379)
+
+
+In parallel_function>distributed_execution (line 746)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In parallel_function (line 578)
+    R = distributed_execution(...
+
+In run_ABR_preproc (line 24)
+parfor ss=1:numsub
+} 
+{Operation terminated by user during distcomp.remoteparfor/getCompleteIntervals (line 379)
+
+
+In parallel_function>distributed_execution (line 746)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In parallel_function (line 578)
+    R = distributed_execution(...
+
+In run_ABR_preproc (line 24)
+parfor ss=1:numsub
+} 
