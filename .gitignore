@@ -5,5 +5,8 @@
 UHEAL_data
 _bsub/bjob_log
 _eeg/_ABR/_bash/log
+_eeg/_FFR/_bash/log
+_eeg/_FFR_4Hz/_bash/log
+_eeg/_AEP/_bash/log
 
 .Rproj.user

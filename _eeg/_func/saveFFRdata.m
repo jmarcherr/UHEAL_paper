@@ -1,5 +1,5 @@
 %% functions
-function saveAEPdata(data,savedir,subid)
+function saveFFRdata(data,savedir,subid)
 
 
     %%  Save mat
