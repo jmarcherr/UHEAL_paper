@@ -68,7 +68,7 @@ try
 
     % Resampling before filtering
     cfgres = [];
-    cfgres.resamplefs = 4096;
+    cfgres.resamplefs = 512;
     cfgres.detrend    = 'no';
     data = ft_resampledata(cfgres,data_int);
 
@@ -80,16 +80,16 @@ try
     cfg.continuous  = 'yes';
     cfg.dftfilter   = 'yes';
     cfg.dftfreq     = [50 100  150];
-    cfg.lpfilttype  = 'firws';
-    cfg.lpfilter    = 'yes';
-    cfg.lpfreq      = 1000;
+    %cfg.lpfilttype  = 'firws';
+    %cfg.lpfilter    = 'yes';
+    %cfg.lpfreq      = ;
     cfg.hpfilter    = 'yes';
     cfg.hpfilttype  = 'firws';
     cfg.hpfreq      = .7; 
-    cfg.demean      = 'yes';
+    %cfg.demean      = 'yes';
 
     % rereferenced data struct
-    data = ft_preprocessing(cfg);
+    data = ft_preprocessing(cfg,data);
 
     % add stimear
     data.missing_trials = missing_trials;

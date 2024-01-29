@@ -1,6 +1,6 @@
 
 %% ABR analysis script
-function data_abr = AEP_analysis(data)
+function data_aep = AEP_analysis(data)
 %% analysis script for preprocessed abr data (AEP_preproc.mat)
 % Outputs baseline corrected, weighted average AEP as well as weighted
 % trials for each ISI condition
@@ -11,17 +11,15 @@ try
         error('No iput. Please provide data from AEP_preproc');
     elseif  ~isfield(data,'hdr')
         error(['No processed AEP data for subject ' data.subid]);
-    elseif sum(strcmp(data.subid,rjt_sub))
-        error(['Noisy data. No processed AEP data for subject ' data.subid])
     end
 
     % get ISI conditions
     if ~isempty(data.missing_trials)
-        ids = data.stim.id(setdiff(1:length(data.stim.id),data.missing_trials));
+        ids = data.stimfile.id(setdiff(1:length(data.stim.id),data.missing_trials));
     else
-        ids = data.stim.id;
+        ids = data.stimfile.id;
     end
-    isi = stim.isi+0.3; % adjusted ISI
+    isi = data.stimfile.isi+0.3; % adjusted ISI
 
     %Get channels of interest
     if strcmp(data.subid,'UH020') % noisy FC4(16 channel)
@@ -61,19 +59,20 @@ try
     end
 
     % timelock analysis
-    [timelock,aep_avg,n1,n1_lat,p2,p2_lat] = AEP_timelock(vts,data_cond,ids);
+    [time,aep_avg_filt,aep_avg,n1,n1_mean,n1_lat,p2,p2_mean,p2_lat] = AEP_timelock(vts,data_cond,ids);
 
     %% save processed AEP
     data_aep = struct;
     data_aep.fs = data.fsample;
     data_aep.subid = data.subid;
     data_aep.nr_reject = nr_reject*100;
-    data_aep.timelock = timelock;
-    data_aep.timelock_time = timelock.time;
-    data_aep.subtrials = subtrials;
+    data_aep.time = time;
     data_aep.aep_avg = aep_avg;
+    data_aep.aep_avg_filt = aep_avg_filt;
     data_aep.n1 = n1;
+    data_aep.n1_mean = n1_mean;
     data_aep.p2 = p2;
+    data_aep.p2_mean = p2_mean;
     data_aep.n1_lat = n1_lat;
     data_aep.p2_lat = p2_lat;
     data_aep.subinfo = data.subinfo;

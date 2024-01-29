@@ -7,6 +7,7 @@ ft_defaults
 addpath(datadir)
 % save dir
 savedir = '/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/_derivatives';
+savedir_preproc = '/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/preproc_aep';
 
 % get avalible subjects
 d = dir([datadir filesep 'UH*']);
@@ -21,9 +22,11 @@ clust.saveProfile;
 parpool(clust, 20);
 % run preproc and save
 %%
-for ss=2%:numsub
+parfor ss=1:numsub
     % run preprocessing
     data_preproc = AEP_preproc(datadir,subids{ss});
+    % save preproc
+    %saveAEPdata(data_preproc,savedir_preproc,subids{ss})
     % run analysis
     data_aep = AEP_analysis(data_preproc);
     % save data
