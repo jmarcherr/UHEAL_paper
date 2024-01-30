@@ -36,7 +36,7 @@ try
     % get BDF name of subject dd
     filename_bdf = dir(fullfile(dataset_root,subid,'*.bdf'));
 
-    if isempty(filename_bdf) % no tiptrode channels
+    if isempty(filename_bdf) || strcmp(subid,'UH001') % wrong data from UH001
         error(sprintf('FFR_4Hz data is not available for subject indentifier %s',subid))
     end
 
@@ -104,7 +104,7 @@ try
 
     %%
     %Rereferencing (l/r mastoid)
-    cfg.channel     = {'eeg','EXG1','EXG2' '-Status'};%chaoi;;%chaoi;
+    cfg.channel     = {'eeg','-Status'};%chaoi;;%chaoi;
     cfg.reref       = 'yes';
     cfg.refchannel  = {'P9','P10'};
 
@@ -126,7 +126,8 @@ try
     data.trl_org = trl_org;
     data.time_stamps = time_stamps;
     data.break_trials = break_trials;
-
+    data.subid = subid;
+    data.subinfo = dataalm.subinfo;
 
 catch ME
     %No data for current subject
