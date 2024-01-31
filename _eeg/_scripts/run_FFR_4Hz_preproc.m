@@ -15,7 +15,7 @@ numsub = length(subids);
 
 %% HPC cluster parameters
 clust=parcluster('dcc');    % load the MDCS cluster profile
-clust.AdditionalProperties.MemUsage = '8GB';
+clust.AdditionalProperties.MemUsage = '16GB';
 clust.AdditionalProperties.WallTime = '20:00';
 clust.saveProfile;
 parpool(clust, 20);

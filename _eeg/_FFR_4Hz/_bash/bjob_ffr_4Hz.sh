@@ -1,7 +1,7 @@
 #!/bin/sh
 #BSUB -J run_preproc_ffr_4hz
 #BSUB -q hpc
-#BSUB -R "rusage[mem=8GB]"
+#BSUB -R "rusage[mem=16GB]"
 #BSUB -R "span[hosts=1]"
 #BSUB -o log/Output_FFR_4Hz.txt
 #BSUB -e log/Error_FFR_4Hz.txt
