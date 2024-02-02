@@ -54,8 +54,9 @@ try
 
     %% weighted average for FFR + noise
     % FFR and noise
+    tidx_w = time>=-1 & time<4.5; % +/- 1s 
     fs = data.fsample;
-    [data_w] = weighted_average_FFR_4Hz(data_cc,tidx);
+    [data_w] = weighted_average_FFR_4Hz(data_cc,tidx_w);
 
     %%
     % ------------------------ Analysis ------------------------
@@ -123,6 +124,7 @@ try
     data_ffr.TS        = data_w;
     data_ffr.time      = time;
     data_ffr.tidx      = tidx;
+    data_ffr.tidx_TS   = tidx_w;
     data_ffr.fs        = fs;
     %data_ffr.itpc_spec = itpc_spec; % itpc spectrogram
     data_ffr.itpc      = itpc_sub;  % itpc over frequency
