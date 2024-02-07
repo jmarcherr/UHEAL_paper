@@ -62,7 +62,7 @@ try
     % ------------------------ Analysis ------------------------
     % itpc spectrum
     N=size(data_cc,3); % number of valid trials
-    tidx_itpc = time>=0 & time<3.5;
+    tidx_itpc = time>=0 & time<3;
     for cc=1:size(data_cc,1) % channels
         for it = 1:N % trials
 

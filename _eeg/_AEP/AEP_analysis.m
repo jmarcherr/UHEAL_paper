@@ -15,7 +15,7 @@ try
 
     % get ISI conditions
     if ~isempty(data.missing_trials)
-        ids = data.stimfile.id(setdiff(1:length(data.stim.id),data.missing_trials));
+        ids = data.stimfile.id(setdiff(1:length(data.stimfile.id),data.missing_trials));
     else
         ids = data.stimfile.id;
     end

@@ -19,9 +19,11 @@ end
 
 % add project paths
 addpath(genpath(fullfile('_eeg/')))
+addpath(genpath(fullfile('_clin/')))
 
 addpath (fullfile('_external/cbrewer/cbrewer'))
 addpath (fullfile('_external'))
+addpath( genpath(fullfile('_external/distributionPlot')))
 
 fprintf('\n directory addded to the path')
 % Determine where your m-file's folder is.

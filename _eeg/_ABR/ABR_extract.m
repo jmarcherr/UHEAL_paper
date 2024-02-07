@@ -1,7 +1,9 @@
 % plot abr and extract peaks
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
+run('/work1/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
 d = dir('_outputs/_derivatives/*.mat')
+
 for dd=1:length(d)
     load([d(dd).folder filesep d(dd).name])
     if isfield(data,'abr')
@@ -15,21 +17,70 @@ for dd=1:length(d)
     subinfo{dd} = data.subinfo;
     age(dd) = data.subinfo.age;
     CP(dd) = data.subinfo.CP;
+    gender(dd) = data.subinfo.gender;
+    rjt_sub(dd) = 0;
      else
     sub_abr(dd,:) = nan;
     t_abr(dd,:) = nan;
     fs(dd) = nan;
-    sub_peaks{dd} = nan;
+    sub_peaks{dd} = [];
     AP_amp_pm(dd) = nan;
     WV_amp_pm(dd) = nan;
     subid{dd} = data.subid;
     subinfo{dd} = data.subinfo;
     age(dd) = data.subinfo.age;
-    CP(dd) = data.subinfo.CP
+    gender(dd) = data.subinfo.gender;
+    CP(dd) = data.subinfo.CP;
+    rjt_sub(dd) = 1;
     end
     clc
     disp([subid{dd} ' done...'])
 end
+
+
+%% save to file
+load('/work1/jonmarc/UHEAL_master/UHEAL_paper/_clin/clin_data_table/clin_data.mat')
+%% gather evertyhing and save
+abr_data = struct;
+abr_data.subid = uheal_data.subid;
+abr_data.SP_amp = nan(size(uheal_data.subid));
+%uheal_data.SP_lat = nan(size(uheal_data.subid));
+abr_data.AP_amp = nan(size(uheal_data.subid));
+abr_data.AP_amp_pm = nan(size(uheal_data.subid));
+abr_data.AP_lat =  nan(size(uheal_data.subid));
+abr_data.WV_amp = nan(size(uheal_data.subid));
+abr_data.WV_amp_pm = nan(size(uheal_data.subid));
+abr_data.WV_lat =  nan(size(uheal_data.subid));
+
+for s=1:length(subid)
+    % get this subid
+    thisID = str2double(subid{s}(3:5))
+    this_idx = find(uheal_data.subid==thisID);
+    if ~isempty(sub_peaks{s})
+    abr_data.SP_amp(this_idx) = sub_peaks{s}.SP_amp;
+    %uheal_data.SP_lat(this_idx) = SP_lat(s);
+    abr_data.AP_amp(this_idx) = sub_peaks{s}.AP_amp;
+    abr_data.AP_lat(this_idx) = sub_peaks{s}.AP_latency;
+    abr_data.WV_amp(this_idx) = sub_peaks{s}.WV_amp;
+    abr_data.WV_lat(this_idx) = sub_peaks{s}.WV_latency;
+    abr_data.AP_amp_pm(this_idx) = AP_amp_pm(s);
+    abr_data.WV_amp_pm(this_idx) = WV_amp_pm(s);
+    end
+end
+save('/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_ABR/_outputs/abr_data_table/abr_data.mat','abr_data');
+
+%% gather traces 
+abr_sub_trace = struct;
+abr_sub_trace.subid = uheal_data.subid;
+abr_sub_trace.sub_abr_b = sub_abr;
+abr_sub_trace.t_abr = t_abr';
+abr_sub_trace.CP = uheal_data.CP_new;
+abr_sub_trace.rjt_sub = rjt_sub'
+abr_sub_trace.age  = age';
+abr_sub_trace.gender = gender';
+
+
+save('/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_ABR/_outputs/abr_data_table/abr_sub_trace','-struct','abr_sub_trace')
 
 
 %% plot

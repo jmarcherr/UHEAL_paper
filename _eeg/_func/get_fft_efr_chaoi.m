@@ -11,7 +11,7 @@ nbins = find([f>=(fid-noisebw) & ...
     f<=(fid+noisebw) &  f~=fid & ...
     f~=linenoise]);
 
-this_noise = mean(fft_sub(nbins));
+this_noise = mean(this_fft(nbins));
 
 %F-statistic
 F_avg=this_fft(find(f==fid))/this_noise;

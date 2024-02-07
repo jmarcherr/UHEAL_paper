@@ -51,17 +51,17 @@ try
     epoched_data = [epoched_data+epoched_inv]/2;         %phase dependent
 
     % artifact rejection and weighting
-    [valid_trials,rjt] = threshold_rejection(epoched_data,30,tidx,trials_oi);
+    [valid_trials,rjt] = threshold_rejection(epoched_data,50,tidx,trials_oi);
 
     % clean epoched data
     data_cc = [];
     % reject if less than half the trials remain
-    if length(valid_trials)<[486/4]
-        error(['Less than half of trials are clean. Rejecting ' data.subid]);
-    else
+    %if length(valid_trials)<[486/4]
+    %    error(['Less than half of trials are clean. Rejecting ' data.subid]);
+    %else
         data_cc = epoched_data(valid_trials,:,:); % clean data
         data_cc = permute(data_cc,[2,3,1]);
-    end
+    %end
     data.valid_trials = valid_trials;
 
     clc

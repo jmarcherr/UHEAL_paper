@@ -60,7 +60,7 @@ try
     fs = data.fsample;
     [data_w,data_w_trial,noise_w] = weighted_average_EFR(data_cc,tidx,tidx_FFR,tidx_noisef);
 
-    data_filt = data_w(:,tidx_FFR); %weighted data 
+    data_filt = data_w;%(:,tidx_FFR); %weighted data 
     data_trial = data_w_trial;  %weighted -0.1 to 0.5 s 
     noise_filt = noise_w;       %weighted noise
 

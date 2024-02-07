@@ -36,7 +36,7 @@ try
     % get BDF name of subject dd
     filename_bdf = dir(fullfile(dataset_root,subid,'*.bdf'));
 
-    if isempty(filename_bdf) || sum(strcmp(subid,{'UH001','UH031'})) % no data for UH001 and  UH031
+    if isempty(filename_bdf) || sum(strcmp(subid,{'UH031'})) % no data for UH001 and  UH031
         error(sprintf('FFR_4Hz data is not available for subject indentifier %s',subid))
     end
 

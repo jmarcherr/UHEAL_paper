@@ -40,7 +40,7 @@ for s=1:length(subs)
         
     else
 
-        itpc(s,:,:) =nan(16,1793);
+        itpc(s,:,:) =nan(16,1537);
         TS_sub(s,:,:) = nan(1,5632);
         TS_sub_chan(s,:,:) = nan(16,5632);
         subinfo{s} = data.subinfo;
@@ -125,7 +125,7 @@ hleg.Position = [0.1567 0.6280 0.1875 0.2683];
 set(gcf,'position',[548 464 651 164])
 
 fig = gcf;
-%saveas(fig,'figs/itpc_harmonics','epsc')
+saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/itpc_harmonics_all','epsc')
 %% mean spectrum
 figure('renderer','painters')
 subplot(1,3,1)
@@ -203,7 +203,9 @@ hleg = legend([p1 p2 p3],'Young','Middle-aged','Older');
 hleg.Box = 'off'
 hleg.Position = [0.2297 0.8552 0.6683 0.1037];
 hleg.Orientation = 'horizontal'
-
+fig = gcf;
+saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/TS_all','epsc')
+%%
 %%% mean amplitude (negativity)
 mean_amp = nanmean(TS_base(:,find(time_TS>=0 & time_TS<=3)),2);
 figure('renderer','painters')
@@ -297,7 +299,7 @@ fig = gcf;
 figure(1)
 set(gcf,'position',[680 283 520 420])
 fig = gcf;
-%saveas(fig,'figs/itpc_ratio_top','epsc')
+%saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/itpc_ratio_top','epsc')
 %% find P1 N1 like Irsik
 % P1 = 0.045-0.065 s
 
@@ -320,50 +322,65 @@ for ii=1:6 % 6 tones
     end
 end
 close all
+figure('renderer','painters')
 subplot(1,2,1)
-plot(nanmean(P1,1))
+plot(nanmean(P1,1),'linewidth',2)
 hold on
-plot(nanmean(N1,1))
-plot(nanmean(P2,1))
-plot(nanmean(N2,1))
+plot(nanmean(N1,1),'linewidth',2)
+plot(nanmean(P2,1),'linewidth',2)
+plot(nanmean(N2,1),'linewidth',2)
 xlim([0 7])
-legend('P1','N1','P2','N2')
-subplot(1,2,2)
-plot(time_TS,squeeze(nanmean(TS_base)))
-hold on
-for ii=1:6
-    plot(P1_idx(ii,:),ones(1,2),'k')
-    plot(N1_idx(ii,:),-1*ones(1,2),'r')
-    plot(P2_idx(ii,:),zeros(1,2),'b')
-    plot(N2_idx(ii,:),-1.5*ones(1,2),'g')
-end
-xlim([-0.1 3.5])
-
-figure
-plot(nanmean(P2(idx,:)-N1(idx,:)))
-hold on
-plot(nanmean(P1(idx,:)-N2(idx,:)))
-plot(nanmean(P1(idx,:)-P2(idx,:)))
-%plot(nanmean(P1P2))
-
+hleg = legend('P1','N1','P2','N2');
+hleg.Box = 'off';
+hleg.Position = [0.1709 0.4237 0.1416 0.2393];
+xlabel('tone nr.')
+ylabel('\mu V')
+set(gca,'xtick',[1:6])
+set(gcf,'position',[440 449 466 257])
+box off
+fig = gcf;
+saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/Peaks','epsc')
+%%
+% figure('renderer','painters')
+% subplot(1,2,2)
+% plot(time_TS,squeeze(nanmean(TS_base)))
+% hold on
+% for ii=1:6
+%     plot(P1_idx(ii,:),ones(1,2),'k')
+%     plot(N1_idx(ii,:),-1*ones(1,2),'r')
+%     plot(P2_idx(ii,:),zeros(1,2),'b')
+%     plot(N2_idx(ii,:),-1.5*ones(1,2),'g')
+% end
+% xlim([-0.1 3.5])
+% 
+% figure('renderer','painters')
+% plot(nanmean(P2(idx,:)-N1(idx,:)))
+% hold on
+% plot(nanmean(P1(idx,:)-N2(idx,:)))
+% plot(nanmean(P1(idx,:)-P2(idx,:)))
+% %plot(nanmean(P1P2))
+%close all
 P1P2 = P1-P2;
 P2N1 = P2-N1;
-figure
-plot(nanmean(P1P2(YNH_idx,:)),'k')
+figure('renderer','painters')
+subplot(1,2,1)
+e1=shadedErrorBar(1:6,nanmean(P2N1(YNH_idx,:)),nanstd(P2N1(YNH_idx,:))/sqrt(length(YNH_idx)),'lineprops',{'Color',y_col})
 hold on
-plot(nanmean(P1P2(MNH_idx,:)),'b')
-plot(nanmean(P1P2(ONH_idx,:)),'r')
-title('P1-P2')
-legend({'y','m','o'},'location','best')
+e2=shadedErrorBar(1:6,nanmean(P2N1(MNH_idx,:)),nanstd(P2N1(MNH_idx,:))/sqrt(length(MNH_idx)),'lineprops',{'Color',m_col})
+e3=shadedErrorBar(1:6,nanmean(P2N1(ONH_idx,:)),nanstd(P2N1(ONH_idx,:))/sqrt(length(ONH_idx)),'lineprops',{'Color',o_col})
+title('P2-N1')
+legend([e1.mainLine,e2.mainLine,e3.mainLine],{'y','m','o'},'location','best')
+set(gca,'xtick',[1:6])
 xlabel('tone nr.')
 xlim([0 7])
-set(gcf,'position',[115 723 331 283])
+set(gcf,'position',[440 449 466 257])
+
 fig = gcf;
-saveas(fig,'figs/P1P2','epsc')
+saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P1P2','epsc')
 %figure
 %scatter(age,nanmean(P1P2,2))
 %lsline
-
+%%
 figure
 plot(nanmean(P2N1(YNH_idx,:)),'k')
 hold on
@@ -373,9 +390,9 @@ title('P2-N1')
 legend({'y','m','o'},'location','best')
 xlabel('tone nr.')
 xlim([0 7])
-set(gcf,'position',[115 723 331 283])
+%set(gcf,'position',[115 723 331 283])
 fig = gcf;
-saveas(fig,'figs/mean_neg_top','epsc')
+%saveas(fig,'figs/mean_neg_top','epsc')
 %figure
 %scatter(age,nanmean(P2N1,2))
 %lsline

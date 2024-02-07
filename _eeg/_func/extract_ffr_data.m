@@ -18,6 +18,7 @@ if isfield(data,'FFR')
     sig_avg(s)      = data.sig_idx_avg;
     F_avg(s)        = data.F_avg;
     F_crit_avg(s)   = data.F_crit_avg;
+    noise_avg(s)    = data.noise_avg; 
     subid{s}        = data.subid;
 
     fft_freq(s,:) = data.fft_freq;
@@ -49,6 +50,7 @@ else
     sig_avg(s)      = 0; % non sig;
     F_avg(s)        = nan;
     F_crit_avg(s)   = nan;
+    noise_avg(s)    = nan;
 
 end
 
