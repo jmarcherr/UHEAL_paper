@@ -16,7 +16,7 @@ if ~isempty(data_in)
 
         % use AP to define SP
         % SP
-        [abr_peaks.SP_amp] = mean(squeeze(data_in(find(t_abr>0):this_ap)));
+        [abr_peaks.SP_amp] = mean(squeeze(data_in(find(t_abr>0 & t_abr<0.8e-3))));
         %abr_peaks.SP_latency = t_abr(SP_lat+sp_peak(1));
 
         % WV

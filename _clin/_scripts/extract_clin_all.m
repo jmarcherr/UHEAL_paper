@@ -61,12 +61,21 @@ crit_4 = aud(:,5)<=40;
 crit_all = [crit_l' crit_4];
 crit_sum = sum(crit_all,2);
 
+
 find(crit_sum==5);
 uheal_data.CP_new = ones(1,117);
 uheal_data.CP_new(find(crit_sum==5))=0;
 uheal_data.CP_new = uheal_data.CP_new';
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% subgroup CP for more strict analysis
+% all thresholds from .25-8kHz -5 db HL=><=15 dB HL 
+CP_SG = double(mean(aud(:,1:6),2)<=20 & ...
+    all(aud(:,1:6)<=15,2) & ...
+    all(aud(:,1:6)>=-5,2));
+uheal_data.CP_SG = CP_SG;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 uheal_data.gender = gender_sub;
 uheal_data.DRCMR = HV_sub';
 uheal_data.aud = aud;
