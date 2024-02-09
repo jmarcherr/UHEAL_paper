@@ -197,7 +197,7 @@ ylabel('ISI(s)')
 ylim([0.25 2.5])
 xlim([0 48*2])
 box off
-set(gca,'fontsize',10)%,'xtick',[1 48*2 48*4])
+set(gca,'fontsize',10,'ytick',[1 2])%,'xtick',[1 48*2 48*4])
 %set(gcf,'position',[680 855 250 168])
 subplot(4,1,4)
 %figure('renderer','painters')
@@ -218,7 +218,8 @@ ylim([0 .7])
 %set(gcf,'position',[680 855 250 207])
 %set(gcf,'position',[0 0 297 258]);
 %set(gcf,'position',[381 231 186 234])
-set(gcf,'position',[[440 433 409 273]])
+%set(gcf,'position',[[440 433 409 273]])
+set(gcf,'position',[381 231 186 234])
 fig = gcf;
 saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs//stim_paradigm_new','epsc')
  %% extract measures

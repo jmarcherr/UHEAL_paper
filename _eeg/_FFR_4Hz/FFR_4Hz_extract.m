@@ -302,7 +302,6 @@ fig = gcf;
 %saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/itpc_ratio_top','epsc')
 %% find P1 N1 like Irsik
 % P1 = 0.045-0.065 s
-
 % N1 = 0.085-0.115 s
 % onset peak
 for ii=1:6 % 6 tones
@@ -433,11 +432,11 @@ for s=1:length(mean_amp)
 end
 
 %%
-thisdir = cd;
-cd('/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data_current_EEG')
-save('uheal_data.mat','uheal_data')
-
-cd(thisdir)
+% thisdir = cd;
+% cd('/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data_current_EEG')
+% save('uheal_data.mat','uheal_data')
+% 
+% cd(thisdir)
 
 
 %% extract p1,n1,p2 in singles script

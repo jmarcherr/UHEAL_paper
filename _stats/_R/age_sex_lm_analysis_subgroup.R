@@ -3,10 +3,10 @@ library(lme4)     # subject specific models (GLMM)
 library(psych)    # OPTIONAL: scatterplots with effects
 library(ggplot2)  # to make other plots
 library(dplyr)
-library(LMMstar)
+#library(LMMstar)
 library(plotrix)               # Load plotrix
 #library(xlsx)
-library(broom)
+#library(broom)
 library(knitr)
 
 # load data

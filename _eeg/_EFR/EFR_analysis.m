@@ -38,7 +38,7 @@ try
     epoched_data =epoch_data_3(data_cond,1,trials_oi);   %epoch x chan x time
 
     % artifact rejection and weighting
-    [valid_trials,rjt] = threshold_rejection(epoched_data,25,tidx,trials_oi);
+    [valid_trials,rjt] = threshold_rejection(epoched_data,50,tidx,trials_oi);
 
     % clean epoched data
     data_cc = [];

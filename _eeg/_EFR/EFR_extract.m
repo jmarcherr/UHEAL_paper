@@ -62,12 +62,12 @@ for s=1:length(subs)
         F_crit(s,:) = nan(1,16);
         sig_idx(s,:) = zeros(1,16);
         sig_idx_cz(s) = 0;
-        f_fft(s,:,:) = nan(16,1025);
-        fft_freq(s,:) = nan(1,1025);
+        f_fft(s,:,:) = nan(16,4097);
+        fft_freq(s,:) = nan(1,4097);
         TS(s,:,:) = nan(16,2458);
 
         fft_noise(s,:) = nan(1,16);
-        noisef(s,:,:) = nan(16,1025);
+        noisef(s,:,:) = nan(16,4097);
         subinfo{s} = data.subinfo;
 
         % 3 channel average
@@ -154,6 +154,14 @@ box off
 %title(['all sig. n= ' num2str(length(find(sig_idx(:,10))))])
 fig = gcf;
 %saveas(fig,'figs_paper/ts_all','epsc')
+
+%% Age EFR
+close  all
+scatter(age(find(sig_idx_avg==1)),SNR_avg(find(sig_idx_avg==1)))
+hold  on
+scatter(age(find(sig_idx_cz ==1)),FFR_SNR(find(sig_idx_cz==1),10))
+[rho,pval]=corr(age(NH_idx)',FFR_SNR(NH_idx,10))
+[rho,pval]=corr(age(NH_idx)',SNR_avg(NH_idx)')
 
 
 %% noise floor
