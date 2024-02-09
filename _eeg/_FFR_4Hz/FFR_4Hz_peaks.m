@@ -79,9 +79,12 @@ chansoi  = setdiff(1:16,[5 11]); % all channels but T7 and T8
 close all
 plot(time_TS,nanmean(TS_base(nh_idx,:)))
 xlim([-0.5 3.5])
-%% find P1 N1 like Irsik
-% P1 = 0.045-0.065 s
-% N1 = 0.085-0.115 s
+%% find P1,N1,P2,N2
+% P1 = 0.045 -  0.065 s
+% N1 = 0.085 -  0.15 s
+% P2 = 0.15  -  0.25 s
+% N2 = 0.2   -  0.5 s
+
 % onset peak
 for ii=1:6 % 6 tones
     for ss=1:size(TS_base,1)
@@ -110,7 +113,7 @@ hleg = legend('P1','N1','P2','N2');
 hleg.Box = 'off';
 hleg.Position = [0.1709 0.4237 0.1416 0.2393];
 xlabel('tone nr.')
-ylabel('\mu V')
+ylabel('\muV')
 set(gca,'xtick',[1:6])
 box off
 
