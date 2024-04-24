@@ -9,7 +9,7 @@ library(plotrix)               # Load plotrix
 #library(broom)
 library(knitr)
 
-# load data
+# load data 
 setwd('/work1/jonmarc/UHEAL_master/UHEAL_paper/_stats/')
 uheal_data <- read.csv("uheal_table.csv", header=TRUE, stringsAsFactors=FALSE)
 uheal_data <- filter(uheal_data, CP_SG == 1)
