@@ -2,6 +2,7 @@
 *.m~
 .DS_Store
 *.mat
+uheal_table.csv
 *.csv
 *.fig
 *.eps
