@@ -1,7 +1,7 @@
 % startup
 rootdir = fileparts(which('UHEAL_startup.m'));
 %datadir = ([rootdir, filesep 'UHEAL_data']); % relative datafolder
-datadir = '/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/'; % hardcoded datafolder
+datadir = '/work3/jonmarc/UHEAL_master/UHEAL/UHEAL_data/'; % hardcoded datafolder
 
 
 try %#ok
@@ -22,6 +22,7 @@ addpath(genpath(fullfile('_eeg/')))
 addpath(genpath(fullfile('_clin/')))
 
 addpath (fullfile('_external/cbrewer/cbrewer'))
+addpath (fullfile('_external/NoiseTools'))
 addpath (fullfile('_external'))
 addpath( genpath(fullfile('_external/distributionPlot')))
 

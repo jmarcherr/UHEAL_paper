@@ -1,4 +1,4 @@
-function [time,aep_avg_filt,aep_avg,n1,n1_mean,n1_lat,p2,p2_mean,p2_lat] = AEP_timelock(vts,data_cond,ids)
+function [time,aep_avg_filt,aep_avg,n1,n1_mean,n1_lat,p2,p2_mean,p2_lat,p1,p1_mean,p1_lat] = AEP_timelock(vts,data_cond,ids)
 %extract average AEP per ISI and get N100 and P200 peak amplitudes and
 %latencies
     % timelock analysis
@@ -14,6 +14,9 @@ function [time,aep_avg_filt,aep_avg,n1,n1_mean,n1_lat,p2,p2_mean,p2_lat] = AEP_t
     cfg.keeptrials  = 'yes';
     timelock = ft_timelockanalysis(cfg,data_cond_nofilt)
     timelock.trialids = ids(fid);
+    % P1 interval
+    timeidx_P1 = find(timelock.time>=0 & timelock.time<=0.085);
+    timeidx_P1_mean = find(timelock.time>=0 & timelock.time<=.085);
     % N1 interval
     timeidx_N1 = find(timelock.time>=.08 & timelock.time<=.15);
     timeidx_N1_mean = find(timelock.time>=.1 & timelock.time<.12);
@@ -28,6 +31,10 @@ function [time,aep_avg_filt,aep_avg,n1,n1_mean,n1_lat,p2,p2_mean,p2_lat] = AEP_t
         % baseline correction
         baseline = mean(aep_avg(kk,find(timelock.time>-0.1 & timelock.time<=0.01)));%
         aep_avg(kk,:) = aep_avg(kk,:)-baseline;
+        % get p50
+        [p1(kk),p1i] = max(aep_avg(kk,timeidx_P1_mean))
+        % mean p50
+        [p1_mean(kk)]=mean(aep_avg(kk,timeidx_P1));
         % get n100
         [n1(kk),ni] = min(aep_avg(kk,timeidx_N1));
         % mean n100
@@ -37,8 +44,10 @@ function [time,aep_avg_filt,aep_avg,n1,n1_mean,n1_lat,p2,p2_mean,p2_lat] = AEP_t
         % P200 mean
         [p2_mean(kk)] = mean(aep_avg(kk,timeidx_P2_mean))
         % latencies
+        p1_lat(kk) = timelock.time(timeidx_P1(p1i));
         n1_lat(kk) = timelock.time(timeidx_N1(ni));
         p2_lat(kk) = timelock.time(timeidx_P2(p2i));
+        
     end
 
     % filtered version for plotting

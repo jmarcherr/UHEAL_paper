@@ -1,6 +1,9 @@
 if isfield(data,'aep_avg')
     aep_sub(s,:,:) = data.aep_avg;
     aep_sub_filt(s,:,:)=data.aep_avg_filt;
+    p1_sub(s,:) = data.p1;
+    p1_sub_mean(s,:) = data.p1_mean;
+    p1_sub_lat(s,:) = data.p1_lat
     n1_sub(s,:) = data.n1;
     n1_mean_sub(s,:)=data.n1_mean;
     n1_sub_lat(s,:) = data.n1_lat;
@@ -17,6 +20,9 @@ if isfield(data,'aep_avg')
 else
     aep_sub(s,:,:) = nan(4,308);
     aep_sub_filt(s,:,:) = nan(4,308);
+    p1_sub(s,:)=nan(1,4);
+    p1_sub_mean(s,:) = nan(1,4);
+    p1_sub_lat(s,:) = nan(1,4);
     n1_sub(s,:) = nan(1,4);
     n1_mean_sub(s,:)=nan(1,4);
     n1_sub_lat(s,:) = nan(1,4);

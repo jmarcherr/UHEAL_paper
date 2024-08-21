@@ -11,6 +11,6 @@
 #BSUB -N "Job done"
 # -- end of LSF options --
 
-cd //work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_scripts
+cd //work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_scripts
 matlab -nodisplay -r run_FFR_4Hz_preproc -logfile log/log_preproc_ffr_4Hz
 

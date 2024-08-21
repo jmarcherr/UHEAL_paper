@@ -175,13 +175,39 @@ hleg.Position = [0.1327 0.7072 0.4963 0.2105]
 fig = gcf;
 saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs/P2N1_all','epsc')
     % for stats
- for ii=1:length(com_sub)
-    pfit(ii,:) = polyfit([0:3],com_mean_sub(ii,:)',1);
-    ffit(ii,:) = polyval(pfit(ii,:),[0:3]);
- end
+%  for ii=1:length(com_sub)
+%     pfit(ii,:) = polyfit([0:3],com_mean_sub(ii,:)',1);
+%     ffit(ii,:) = polyval(pfit(ii,:),[0:3]);
+%  end
 
  %figure
  %scatter(age,pfit(:,2))
+
+% P50
+figure('Renderer','painter')
+% Young
+plot(rates,nanmean(p1_sub(YNH_idx,:)),'color',y_col)
+hold on
+plot(rates,nanmean(p1_sub(MNH_idx,:)),'color',m_col)
+plot(rates,nanmean(p1_sub(ONH_idx,:)),'-','color',o_col)
+for ii=1:4
+    eb(2,ii)=errorbar(rates(ii)-.01,nanmean(p1_sub(YNH_idx,ii)),nanstd(p1_sub(YNH_idx,ii))/sqrt(length(YNH_idx)),'^','color',y_col,'markerfacecolor',y_col,'MarkerEdgecolor','k','MarkerSize',6.8)
+    eb(2,ii)=errorbar(rates(ii),nanmean(p1_sub(MNH_idx,ii)),nanstd(p1_sub(MNH_idx,ii))/sqrt(length(MNH_idx)),'sq','color',m_col,'markerfacecolor',m_col,'MarkerEdgecolor','k','MarkerSize',6.8)
+    eb(1,ii)=errorbar(rates(ii)+.01,nanmean(p1_sub(ONH_idx,ii)),nanstd(p1_sub(ONH_idx,ii))/sqrt(length(ONH_idx)),'o','color',o_col,'markerfacecolor',o_col,'MarkerEdgecolor','k')
+
+end
+
+
+ylabel('P50\muV')
+xlabel('ISI (s)')
+set(gca,'fontsize',12)
+set(gcf,'position',[438 10 270 266])
+set(gca,'xtick',rates)
+xlim([0.5 2.5])
+ylim([-0.5 3])
+fig=gcf
+box off
+ saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs/p50_age_group','epsc')
 %% plot stim
 close all
 figure('renderer','painters')

@@ -2,9 +2,9 @@
 % plot FFR_4Hz and extract peaks
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/work1/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
+run('/work3/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
 subs = dir('_outputs/_derivatives/*.mat')
-load('/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data_current_EEG/uheal_data.mat');
+load('/work3/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data_current_EEG/uheal_data.mat');
 %% get data
 for s=1:length(subs)
     
@@ -125,7 +125,7 @@ hleg.Position = [0.1567 0.6280 0.1875 0.2683];
 set(gcf,'position',[548 464 651 164])
 
 fig = gcf;
-saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/itpc_harmonics_all','epsc')
+saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/itpc_harmonics_all','epsc')
 %% mean spectrum
 figure('renderer','painters')
 subplot(1,3,1)
@@ -204,7 +204,7 @@ hleg.Box = 'off'
 hleg.Position = [0.2297 0.8552 0.6683 0.1037];
 hleg.Orientation = 'horizontal'
 fig = gcf;
-saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/TS_all','epsc')
+saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/TS_all','epsc')
 %%
 %%% mean amplitude (negativity)
 mean_amp = nanmean(TS_base(:,find(time_TS>=0 & time_TS<=3)),2);
@@ -299,7 +299,7 @@ fig = gcf;
 figure(1)
 set(gcf,'position',[680 283 520 420])
 fig = gcf;
-%saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/itpc_ratio_top','epsc')
+%saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/itpc_ratio_top','epsc')
 %% find P1 N1 like Irsik
 % P1 = 0.045-0.065 s
 % N1 = 0.085-0.115 s
@@ -338,7 +338,7 @@ set(gca,'xtick',[1:6])
 set(gcf,'position',[440 449 466 257])
 box off
 fig = gcf;
-saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/Peaks','epsc')
+saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/Peaks','epsc')
 %%
 % figure('renderer','painters')
 % subplot(1,2,2)
@@ -375,7 +375,7 @@ xlim([0 7])
 set(gcf,'position',[440 449 466 257])
 
 fig = gcf;
-saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P1P2','epsc')
+saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P1P2','epsc')
 %figure
 %scatter(age,nanmean(P1P2,2))
 %lsline
@@ -413,7 +413,7 @@ lsline
 
 %% extract measures and save to UHEAL_data
 % save to UHEAL_data
-load('/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data_current_EEG/uheal_data.mat');
+load('/work3/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data_current_EEG/uheal_data.mat');
 uheal_data.neg_4Hz = nan(size(uheal_data.subid));
 uheal_data.itpc_F0_4Hz = nan(size(uheal_data.subid));
 uheal_data.itpc_ratio_4Hz = nan(size(uheal_data.subid));
@@ -433,7 +433,7 @@ end
 
 %%
 % thisdir = cd;
-% cd('/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data_current_EEG')
+% cd('/work3/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data_current_EEG')
 % save('uheal_data.mat','uheal_data')
 % 
 % cd(thisdir)
@@ -747,7 +747,7 @@ end
 
 %%
 function c=jm_topoplot(var1,zlim,tit_string,coff)
-load('/work1/jonmarc/UHEAL_master/UHEAL/_EEG/_func/topo_default.mat');
+load('/work3/jonmarc/UHEAL_master/UHEAL/_EEG/_func/topo_default.mat');
 freq.powspctrm = var1;%nanmean(F_sub(YNH_idx,:))';
 cfg = [];
 cfg.comment = 'no';

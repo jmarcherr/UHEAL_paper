@@ -2,9 +2,9 @@
 % plot FFR_4Hz and extract peaks
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/work1/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
+run('/work3/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
 subs = dir('_outputs/_derivatives/*.mat')
-load('/work1/jonmarc/UHEAL_master/UHEAL_paper/_stats/uheal_data.mat');
+load('/work3/jonmarc/UHEAL_master/UHEAL_paper/_stats/uheal_data.mat');
 %% get data
 for s=1:length(subs)
     
@@ -88,21 +88,85 @@ xlim([-0.5 3.5])
 % N2 = 0.2   -  0.5 s
 
 % onset peak
-for ii=1:6 % 6 tones
-    for ss=1:size(TS_base,1)
-        P1_idx(ii,:) =[0+0.5*(ii-1) 0.085+0.5*(ii-1)];
-        P1(ss,ii) = max(TS_base(ss,find(time_TS>=P1_idx(ii,1) & time_TS<=P1_idx(ii,2))));
+close all
+figure('renderer','painters')
+  for ss=1:size(TS_base,1)
+      close all
+    for ii=1:6 % 6 tones
+  
+        P1_idx(ii,:) =[0.03+0.5*(ii-1) 0.085+0.5*(ii-1)];
+        [P1(ss,ii),P1_l(ss,ii)] = max(TS_base(ss,find(time_TS>=P1_idx(ii,1) & time_TS<=P1_idx(ii,2))));
 
         N1_idx(ii,:) =[0.065+0.5*(ii-1)  0.15+0.5*(ii-1)];
-        N1(ss,ii) = min(TS_base(ss,find(time_TS>=N1_idx(ii,1) & time_TS<=N1_idx(ii,2))));
+        [N1(ss,ii),N1_l(ss,ii)] = min(TS_base(ss,find(time_TS>=N1_idx(ii,1) & time_TS<=N1_idx(ii,2))));
 
         P2_idx(ii,:) =[0.15+0.5*(ii-1) 0.25+0.5*(ii-1)];
-        P2(ss,ii) = max(TS_base(ss,find(time_TS>=P2_idx(ii,1) & time_TS<=P2_idx(ii,2))));
+        [P2(ss,ii),P2_l(ss,ii)] = max(TS_base(ss,find(time_TS>=P2_idx(ii,1) & time_TS<=P2_idx(ii,2))));
 
         N2_idx(ii,:) = [0.2+0.5*(ii-1) 0.5+0.5*(ii-1)];
-        N2(ss,ii) = min(TS_base(ss,find(time_TS>=N2_idx(ii,1) & time_TS<= N2_idx(ii,2))));
+        [N2(ss,ii),N2_l(ss,ii)] = min(TS_base(ss,find(time_TS>=N2_idx(ii,1) & time_TS<= N2_idx(ii,2))));
+        
+%         % plot individual traces
+%         subplot(6,1,ii)
+%         this_t = [0 0.5]+(0.5*(ii-1));
+%         this_t_idx = find(time_TS>=this_t(1) & time_TS<=this_t(2));
+%         plot(time_TS(this_t_idx),TS_base(ss,this_t_idx),'color','k')
+%         hold on
+%         plot(time_TS(this_t_idx(P1_l(ss,ii)))+0.03,P1(ss,ii),'rx')
+%         plot(time_TS(this_t_idx(N1_l(ss,ii)))+0.065,N1(ss,ii),'r<')
+%         plot(time_TS(this_t_idx(P2_l(ss,ii)))+0.15,P2(ss,ii),'r>')
+%         xlim([this_t])
+%         set(gca,'xtick',[this_t(1):0.1:this_t(2)])
+%         grid on
+%         box off
+%         if ii==1
+%         title([num2str(subs(ss).name(1:5))])
+%         end
+%         set(gcf,'position',[440 104 231 600])
+%         fig = gcf;
+%         saveas(fig,['/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/sub_traces/' subs(ss).name(1:5)],'epsc')
     end
-end
+    %pause
+  end
+  
+
+  for pp=1:3
+      subplot(3,1,pp)
+  plot(time_TS,TS_base(idx_all{pp},:),'color',[0.5 0.5 0.5 0.5])
+  hold on
+  plot(time_TS,nanmean(TS_base(idx_all{pp},:)),'color',gcol{pp},'linewidth',2)
+  xlim([-0.5 3.5])
+  ylim([-6 6])
+  end
+%%
+close all
+figure('renderer','painters')
+  % group plots
+    for ii=1:6
+    
+    subplot(1,6,ii)
+    idx_all = {YNH_idx,MNH_idx,ONH_idx};
+    gcol = {y_col,m_col,o_col};
+    marks = {'o','sq','^'}
+
+    for pp=1:3
+        this_t = [0 0.5]+(0.5*(ii-1));
+        this_t_idx = find(time_TS>=this_t(1) & time_TS<=this_t(2));
+        plot(time_TS(this_t_idx),nanmean(TS_base(idx_all{pp},this_t_idx),1),'color',gcol{pp})
+        hold on
+        plot(time_TS(this_t_idx(round(nanmean(P1_l(idx_all{pp},ii))))),nanmean(P1(idx_all{pp},ii)),'x','color',gcol{pp})
+        plot(time_TS(this_t_idx(round(nanmean(N1_l(idx_all{pp},ii)))))+0.065,nanmean(N1(idx_all{pp},ii)),'<','color',gcol{pp})
+        plot(time_TS(this_t_idx(round(nanmean(P2_l(idx_all{pp},ii)))))+0.15,nanmean(P2(idx_all{pp},ii)),'>','color',gcol{pp})
+        xlim([this_t])
+        ylim([-4 3])
+        set(gca,'xtick',[this_t(1):0.1:this_t(2)])
+        box off
+    end
+    set(gcf,'position',[256 128 1090 576])
+    end
+            fig = gcf;
+        %saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/replot_ffr','epsc')
+%%
 close all
 subplot(1,2,1)
 plot(nanmean(P1,1),'linewidth',2)
@@ -118,6 +182,9 @@ xlabel('tone nr.')
 ylabel('\muV')
 set(gca,'xtick',[1:6])
 box off
+
+
+% plot sequences ontop
 
 %%  plot p2 relative to p1
 close all
@@ -188,10 +255,58 @@ plot(stime,(stim_all*0.2)-3,'color',[0.5 0.5 0.5 0.5])
 set(gcf,'position',[214 275 1059 429])
 
 fig = gcf;
-saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50_rel_peaks','epsc')
+%saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50_rel_peaks','epsc')
 
+%% n100-p200
+close all
+figure('renderer','painters')
+n1p2=P2-N1;
+p50 = P1;
+idx_all = {YNH_idx,MNH_idx,ONH_idx};
+gcol = {y_col,m_col,o_col};
+marks = {'o','sq','^'}
+for pp=1:3
+    errorbar(1:6,nanmean(n1p2(idx_all{pp},:)),nanstd(n1p2(idx_all{pp},:))/sqrt(length(idx_all{pp})),'color',gcol{1},'marker',marks{pp},'markerfacecolor',gcol{pp});%,'o-','color',y_col)
+    hold on
+end
+box off
+title('P200-N100')
+xlabel('tone nr.')
+ylabel('\muV')
+set(gca,'xtick',[1:6])
+xlim([0 7])
+hleg=legend({'Young','Mid. aged','Older'});
+hleg.Box = 'off'
+hleg.Position = [0.5728 0.6010 0.2869 0.1950];
+set(gcf,'position',[440 471 289 233])
 
+fig = gcf;
+saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P2-N1','epsc')
 
+%% P50
+close all
+figure('renderer','painters')
+
+idx_all = {YNH_idx,MNH_idx,ONH_idx};
+gcol = {y_col,m_col,o_col};
+marks = {'o','sq','^'}
+for pp=1:3
+    errorbar(1:6,nanmean(P1(idx_all{pp},:)),nanstd(P1(idx_all{pp},:))/sqrt(length(idx_all{pp})),'color',gcol{1},'marker',marks{pp},'markerfacecolor',gcol{pp});%,'o-','color',y_col)
+    hold on
+end
+box off
+title('P50')
+xlabel('tone nr.')
+ylabel('\muV')
+set(gca,'xtick',[1:6])
+xlim([0 7])
+hleg=legend({'Young','Mid. aged','Older'});
+hleg.Box = 'off'
+hleg.Position = [0.5432 0.1985 0.3599 0.2017];
+set(gcf,'position',[440 471 289 233])
+
+fig = gcf;
+saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50','epsc')
 %% corr with age
 close all
 figure('renderer','painters')
@@ -227,7 +342,7 @@ for tt=1:6 % 6 tones
 end
 set(gcf,'position',[303 163 829 540])
 fig = gcf;
-saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50_rel_peaks_scatter','epsc')
+saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50_rel_peaks_scatter','epsc')
 
 %% tone 2- tone 1 response
 close all
@@ -247,4 +362,6 @@ for pp =1:3
 end
 set(gcf,'position',[440 552 494 151])
 fig = gcf;
-saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50_rel_peaks_t2-t1','epsc')
+saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50_rel_peaks_t2-t1','epsc')
+
+

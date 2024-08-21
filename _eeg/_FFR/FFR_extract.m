@@ -1,7 +1,7 @@
 
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/work1/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
+run('/work3/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
 d = dir('_outputs/_derivatives/*.mat')
 clc
 for s=1:length(d)
@@ -12,7 +12,7 @@ for s=1:length(d)
 end
 
  %% load clinical measures
-load('/work1/jonmarc/UHEAL_master/UHEAL/uheal_data.mat')
+load('/work3/jonmarc/UHEAL_master/UHEAL/uheal_data.mat')
 
 % get age groups
 CP = ~uheal_data.CP_new
@@ -155,7 +155,7 @@ fig = gcf;
 
 
 %% save to UHEAL_data
-%load('/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data.mat')
+%load('/work3/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data.mat')
 %uheal_data.FFR_SNR = nan(size(uheal_data.subid));
 %uheal_data.FFR_sig = nan(size(uheal_data.subid));
 
@@ -171,7 +171,7 @@ fig = gcf;
 % thisdir = cd;
 % uheal_data.FFR_SNR = uheal_data.FFR_SNR';
 % uheal_data.FFR_sig = uheal_data.FFR_sig';
-%cd('/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/')
+%cd('/work3/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/')
 %uheal_table = struct2table(uheal_data)
 
 %writetable(uheal_table,'uheal_data.csv')  
@@ -181,7 +181,7 @@ fig = gcf;
 
 %%
 function c=jm_topoplot(var1,zlim,tit_string,coff)
-load('/work1/jonmarc/UHEAL_master/UHEAL/_EEG/_func/topo_default.mat');
+load('/work3/jonmarc/UHEAL_master/UHEAL/_EEG/_func/topo_default.mat');
 freq.powspctrm = var1;%nanmean(F_sub(YNH_idx,:))';
 cfg = [];
 cfg.comment = 'no';

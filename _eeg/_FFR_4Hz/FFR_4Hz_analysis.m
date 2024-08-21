@@ -122,6 +122,7 @@ try
     data_ffr = struct;
 
     data_ffr.TS        = data_w;
+    data_ffr.TS_trials = data_cc(:,tidx_w,:);
     data_ffr.time      = time;
     data_ffr.tidx      = tidx;
     data_ffr.tidx_TS   = tidx_w;
