@@ -11,6 +11,6 @@
 #BSUB -N "Job done"
 # -- end of LSF options --
 
-cd //work1/jonmarc/UHEAL_master/UHEAL_paper/_clin/
+cd //zhome/7e/f/64621/Desktop/UHEAL_paper/_clin
 matlab -nodisplay -r run_clin_scraper -logfile log/log_clin
 

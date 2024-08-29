@@ -1,12 +1,12 @@
 % run clin_scraper
 clear all
-cd('/work1/jonmarc/UHEAL_master/UHEAL_paper')
-UHEAL_startup
+%cd('/work1/jonmarc/UHEAL_master/UHEAL_paper')
+run('/zhome/7e/f/64621/Desktop/UHEAL_paper/UHEAL_startup') % path to your folder
 cd(rootdir)
 ft_defaults
 addpath(datadir)
 % save dir
-savedir = '/work1/jonmarc/UHEAL_master/UHEAL_paper/_clin/_clindata';
+savedir = '/zhome/7e/f/64621/Desktop/UHEAL_paper/_clin/_clindata';
 
 % get avalible subjects
 d = dir([datadir filesep 'UH*']);

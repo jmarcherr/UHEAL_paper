@@ -1,12 +1,12 @@
 % run FFR preproc
 clear all
-cd('/work1/jonmarc/UHEAL_master/UHEAL_paper')
-UHEAL_startup
+%cd('/work1/jonmarc/UHEAL_master/UHEAL_paper')
+run('/zhome/7e/f/64621/Desktop/UHEAL_paper/UHEAL_startup.m')
 cd(rootdir)
 ft_defaults
 addpath(datadir)
 % save dir
-savedir = '/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR/_outputs/_derivatives';
+savedir = '/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR/_outputs/_derivatives';
 
 % get avalible subjects
 d = dir([datadir filesep 'UH*']);

@@ -3,8 +3,8 @@
 close all
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/work1/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
-clindir = '/work1/jonmarc/UHEAL_master/UHEAL_paper/_clin/_clindata';
+run('/zhome/7e/f/64621/Desktop/UHEAL_paper/UHEAL_startup.m')
+clindir = '/work3/jonmarc/UHEAL_master/UHEAL_paper/_clin/_clindata';
 freq_aud = [250 500 1000 2000 4000 8000 9000 10000 11200 12500 14000 16000];
 d=dir(fullfile([clindir filesep 'UH*.mat']));
 
