@@ -2,8 +2,8 @@
 % plot FFR_4Hz and extract peaks
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/work3/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
-subs = dir('_outputs/_derivatives/*.mat')
+run('/zhome/7e/f/64621/Desktop/UHEAL_paper/UHEAL_startup.m')
+subs = dir('/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/_derivatives/*.mat')
 load('/work3/jonmarc/UHEAL_master/UHEAL_paper/_stats/uheal_data.mat');
 %% get data
 for s=1:length(subs)

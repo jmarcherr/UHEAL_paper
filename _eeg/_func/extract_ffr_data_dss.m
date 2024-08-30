@@ -10,16 +10,16 @@ if isfield(data,'FFR')
     noise_sub(s,:,:)  = data.fft_noise; %noise per chan
     noise_f_sub(s,:,:) = data.noise.f;
     time{s}         = data.time;
-
+    tidx{s}         = data.tidx;
 
     % dss
     %time x chan x trials
-    dat  = permute(data.trial(1:16,:,:),[2,1,3]);
+    dat  = permute(data.FFR_trials(1:16,:,:),[2,1,3]);
 
     % get resonator filter at stimulus frequency
     FPEAK=326; % Hz
     Q=8; % determines width
-    [b,a]=nt_filter_peak(FPEAK/(fs/2),Q);
+    [b,a]=nt_filter_peak(FPEAK/(fs(s)/2),Q);
     % covariance matrices of full band (c0) and filtered (c1)
     [c0,c1]=nt_bias_filter(dat,b,a);
 
@@ -28,14 +28,33 @@ if isfield(data,'FFR')
     p1=pwr1./pwr0; % score, proportional to power ratio of 50Hz & harmonics to full band
 
     % DSS components
-    z=nt_mmat(meg,todss);
-    % regress out last components,keep 1
+    z=nt_mmat(dat,todss);
+    % regress out last components,keep 2
     tmp=nt_tsr(dat,squeeze(z(:,2:end,:)));
-    dat_clean(s,:,:) = nanmean(tmp,3);
+    dat_clean(s,:,:) = permute(nanmean(tmp,3),[2,1]);
 
+    %% get ffr from dss
+        foi = [326]; % pure tone frequency
+
+        %get fft FFR
+
+
+        [f_tmp,fft_sub_tmp,f_fft_noise_tmp,FFR_tmp,F_tmp,SNR_tmp,F_crit_tmp]=get_fft(squeeze(dat_clean(s,:,tidx{s})),foi,fs(s));
+        % selected channels
+        chaoi_avg = [find(strcmp(data.chan_labels,'Cz')),...
+            find(strcmp(data.chan_labels,'FCz')),...
+            find(strcmp(data.chan_labels,'Fz'))];
+
+        % get channel average SNR/FFR over Cz, Fz and FCz
+        [f_fft_avg,FFR_avg_tmp,F_avg_tmp,SNR_avg_tmp,F_crit_avg_tmp,sig_idx_avg_tmp,noise_avg_tmp]=get_fft_chaoi(f_tmp,fft_sub_tmp,chaoi_avg,foi);
+        FFR_dss(s) = FFR_avg_tmp;
+        SNR_dss(s) = SNR_avg_tmp;
+        sig_dss(s) = sig_idx_avg_tmp;
+
+    %%
     clear TS_trials dat
         %
-    tidx{s}         = data.tidx;
+    
 
     %average over Cz,Fz,FCz
     FFR_avg(s)      = data.F_avg;
@@ -77,6 +96,10 @@ else
     F_avg(s)        = nan;
     F_crit_avg(s)   = nan;
     noise_avg(s)    = nan;
+
+    FFR_dss(s) = nan;
+    SNR_dss(s) = nan;
+    sig_dss(s) = 0;
 
 end
 

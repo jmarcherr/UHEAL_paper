@@ -6,10 +6,11 @@ d = dir('/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR/_outputs/_derivatives
 clc
 for s=1:length(d)
     load([d(s).folder filesep d(s).name]);
-    extract_ffr_data;
+    extract_ffr_data_dss;
 
     disp([subid{s} ' done...'])
 end
+
 
  %% load clinical measures
 load('/work3/jonmarc/UHEAL_master/UHEAL/uheal_data.mat')
@@ -24,24 +25,32 @@ nh = find(CP' & sig_avg);
 % get colormap
 uheal_colormap;
 
+%% compare traces
+nh_all = find(CP);
+close all
+subplot 121
+plot(squeeze(nanmean(dat_clean(nh_all,1:16,:)))')
+subplot 122
+plot(squeeze(nanmean(TS_sub(nh_all,1:16,:)))')
+
 %% Topoplots of SNR over channels (vertical)
 
 figure('renderer','painter')
 subplot(3,2,1)
 zlim = [25 40];
-c=jm_topoplot(nanmean(SNR_sub(y,:))',zlim,'Young',1);
+c=jm_topoplot(nanmean(SNR_dss(y,:))',zlim,'Young',1);
 c.Label.String = 'SNR (dB)';
 c.FontSize = 10;
 c.Ticks = [30 40];
 
 subplot(3,2,3)
-c=jm_topoplot(nanmean(SNR_sub(m,:))',zlim,'Middle-aged',1);
+c=jm_topoplot(nanmean(SNR_dss(m,:))',zlim,'Middle-aged',1);
 c.Label.String = 'SNR (dB)';
 c.FontSize = 10;
 c.Ticks = [30 40];
 
 subplot(3,2,5)
-c=jm_topoplot(nanmean(SNR_sub(o,:))',zlim,'Older',1);
+c=jm_topoplot(nanmean(SNR_dss(o,:))',zlim,'Older',1);
 c.Label.String = 'SNR (dB)';
 c.FontSize = 10;
 c.Ticks = [30 40];
