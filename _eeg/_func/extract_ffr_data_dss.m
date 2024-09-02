@@ -17,12 +17,14 @@ if isfield(data,'FFR')
     dat  = permute(data.FFR_trials(1:16,:,:),[2,1,3]);
 
     % get resonator filter at stimulus frequency
-    FPEAK=326; % Hz
-    Q=8; % determines width
-    [b,a]=nt_filter_peak(FPEAK/(fs(s)/2),Q);
+    %FPEAK=326; % Hz
+    %Q=8; % determines width
+    %[b,a]=nt_filter_peak(FPEAK/(fs(s)/2),Q);
     % covariance matrices of full band (c0) and filtered (c1)
-    [c0,c1]=nt_bias_filter(dat,b,a);
+    %[c0,c1]=nt_bias_filter(dat,b,a);
 
+    c0 = nt_cov(dat);
+    c1 = nt_cov(mean(dat,3));
     % DSS matrix
     [todss,pwr0,pwr1]=nt_dss0(c0,c1);
     p1=pwr1./pwr0; % score, proportional to power ratio of 50Hz & harmonics to full band
@@ -30,7 +32,7 @@ if isfield(data,'FFR')
     % DSS components
     z=nt_mmat(dat,todss);
     % regress out last components,keep 2
-    tmp=nt_tsr(dat,squeeze(z(:,2:end,:)));
+    tmp=nt_tsr(dat,squeeze(z(:,3:end,:)));
     dat_clean(s,:,:) = permute(nanmean(tmp,3),[2,1]);
 
     %% get ffr from dss

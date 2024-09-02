@@ -33,6 +33,9 @@ plot(squeeze(nanmean(dat_clean(nh_all,1:16,:)))')
 subplot 122
 plot(squeeze(nanmean(TS_sub(nh_all,1:16,:)))')
 
+%% plot SNR of DSS vs. raw
+close all
+scatter(SNR_dss(CP),SNR_sub(CP))
 %% Topoplots of SNR over channels (vertical)
 
 figure('renderer','painter')

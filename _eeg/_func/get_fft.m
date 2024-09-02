@@ -17,7 +17,7 @@ for cc=1:chans
     % get complex value at signal bin
     f_fft_cmplx = f_fft(find(f==fid));
     %get powerbin
-    f_fft_sub_pow = fft_sub(cc,find(f==fid));
+    f_fft_sub_pow(cc) = fft_sub(cc,find(f==fid));
     
     %get noise
     noisebw = 20;
@@ -30,16 +30,16 @@ for cc=1:chans
             & f~=nonfreqs(7) & f~=nonfreqs(8)...
             & f~=nonfreqs(9) & f~=nonfreqs(10)]); 
 
-    f_fft_noise(cc,:) = mean(fft_sub(cc,nbins));
+    f_fft_noise(cc) = mean(fft_sub(cc,nbins));
     
     %F-statistic
-    F(cc)=f_fft_sub_pow/f_fft_noise(cc,:);
+    F(cc)=f_fft_sub_pow(cc)./f_fft_noise(cc);
     bg_freq = nbins;
     F_crit(cc) = finv(0.99,2,2*length(bg_freq));
     
     %SNR
-    SNR(cc) = db(f_fft_sub_pow)-db(f_fft_noise(cc,:));
-    FFR(cc) =f_fft_sub_pow;
+    SNR(cc) = db(f_fft_sub_pow(cc)')-db(f_fft_noise(cc)');
+    FFR(cc) =f_fft_sub_pow(cc);
 
     
     
