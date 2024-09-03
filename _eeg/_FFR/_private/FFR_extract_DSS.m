@@ -1,8 +1,8 @@
 
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/zhome/7e/f/64621/Desktop/UHEAL_paper/UHEAL_startup.m')
-d = dir('/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR/_outputs/_derivatives/*.mat')
+run('/work3/jonmarc/UHEAL_paper/UHEAL_startup.m')
+d = dir('/work3/jonmarc/UHEAL_paper/_eeg/_FFR/_outputs/_derivatives/*.mat')
 clc
 for s=1:length(d)
     load([d(s).folder filesep d(s).name]);
@@ -17,9 +17,9 @@ load('/work3/jonmarc/UHEAL_master/UHEAL/uheal_data.mat')
 
 % get age groups
 CP = ~uheal_data.CP_new
-y = find(age<=25 & CP' & sig_avg);
-m = find(age>25 & age<50 & CP' & sig_avg);
-o = find(age>=50 & CP' & sig_avg);
+y = find(Age<=25 & CP' & sig_avg);
+m = find(Age>25 & age<50 & CP' & sig_avg);
+o = find(Age>=50 & CP' & sig_avg);
 nh = find(CP' & sig_avg);
 nh_all = find(CP' & ~isnan(TS_sub(:,1,1))')
 
