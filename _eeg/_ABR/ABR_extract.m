@@ -1,7 +1,7 @@
 % plot abr and extract peaks
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/work1/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
+run('/work3/jonmarc/UHEAL_paper/UHEAL_startup.m')
 d = dir('_outputs/_derivatives/*.mat')
 
 for dd=1:length(d)
@@ -39,7 +39,7 @@ end
 
 
 %% save to file
-load('/work1/jonmarc/UHEAL_master/UHEAL_paper/_clin/clin_data_table/clin_data.mat')
+load('/work3/jonmarc/UHEAL_paper/_clin/clin_data_table/clin_data.mat')
 %% gather evertyhing and save
 abr_data = struct;
 abr_data.subid = uheal_data.subid;
@@ -67,7 +67,7 @@ for s=1:length(subid)
     abr_data.WV_amp_pm(this_idx) = WV_amp_pm(s);
     end
 end
-save('/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_ABR/_outputs/abr_data_table/abr_data.mat','abr_data');
+save('/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_outputs/abr_data_table/abr_data.mat','abr_data');
 
 %% gather traces 
 abr_sub_trace = struct;
@@ -80,11 +80,11 @@ abr_sub_trace.age  = age';
 abr_sub_trace.gender = gender';
 
 
-save('/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_ABR/_outputs/abr_data_table/abr_sub_trace','-struct','abr_sub_trace')
+save('/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_ABR/_outputs/abr_data_table/abr_sub_trace','-struct','abr_sub_trace')
 
 
 %% plot
-load('/work1/jonmarc/UHEAL_master/UHEAL/uheal_data.mat')
+load('/work3/jonmarc/UHEAL_master/UHEAL/uheal_data.mat')
 %plot mean 
 figure
 plot(t_abr(1,:),nanmean(sub_abr(:,:)))

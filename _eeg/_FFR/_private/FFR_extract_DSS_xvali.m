@@ -107,6 +107,45 @@ title(['mcca: sig = ' num2str(length(find(sig_mcca(CP)))) '/' num2str(length(fin
 fig = gcf;
 
 saveas(fig,'figs/dssvsmcca_scatter','epsc')
+
+%% cross validation
+data_x = nan(size(TS_sub));
+FFR_x = nan(size(TS_sub,1),1);
+SNR_x = nan(size(TS_sub,1),1);
+sig_x = nan(size(TS_sub,1),1);
+SNR_chan_x = nan(size(SNR_sub));
+for ss=1:length(nh_all)
+
+this_sub = nh_all(ss);
+rest = setdiff(nh_all,this_sub);
+% mcca over rest of subjects
+nchans = 16;
+x = permute(squeeze(TS_sub(rest,1:16,tidx{1})),[3,2,1]);
+xx=x(:,:); % concatenate channelwise
+%xx = zscore(xx);
+C=xx'*xx;
+[A,score,AA]=nt_mcca(C,nchans);
+z=xx*A; % common space
+
+disp(['running mcca model without subject ' subid{nh_all(ss)} '....'])
+
+z_sub = squeeze(TS_sub(nh_all(ss),:,:))'*AA{(ss)}(:,:);
+z_sub(:,3:end) = 0;
+data_x(nh_all(ss),:,:) = permute(z_sub*pinv(AA{ss}(:,:)),[2,1]);
+%get fft FFR
+[f_tmp,fft_sub_tmp,f_fft_noise_tmp,FFR_tmp,F_tmp,SNR_tmp,F_crit_tmp]=get_fft(squeeze(data_z(nh_all(ss),:,tidx{1})),foi,fs(s));
+% selected channels
+chaoi_avg = [find(strcmp(data.chan_labels,'Cz')),...
+    find(strcmp(data.chan_labels,'FCz')),...
+    find(strcmp(data.chan_labels,'Fz'))];
+SNR_chan_x(nh_all(ss),:) = SNR_tmp;
+
+% get channel average SNR/FFR over Cz, Fz and FCz
+[f_fft_avg,FFR_avg_tmp,F_avg_tmp,SNR_avg_tmp,F_crit_avg_tmp,sig_idx_avg_tmp,noise_avg_tmp]=get_fft_chaoi(f_tmp,fft_sub_tmp,chaoi_avg,foi);
+FFR_x(nh_all(ss)) = FFR_avg_tmp;
+SNR_x(nh_all(ss)) = SNR_avg_tmp;
+sig_x(nh_all(ss)) = sig_idx_avg_tmp;
+end
 %% Topoplots of SNR over channels (vertical)
 close  all
 
