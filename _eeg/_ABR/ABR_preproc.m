@@ -10,7 +10,7 @@ function data = ABR_preproc(dataset_root,subid)
 %        Preprocessed ABR data
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if nargin < 1 || isempty(dataset_root); dataset_root = '/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/'; end
+if nargin < 1 || isempty(dataset_root); dataset_root = '/work3/jonmarc/UHEAL_master/UHEAL/UHEAL_data/'; end
 if nargin < 2 || isempty(subid); error('Please provide subject identifier'); end
 
 try

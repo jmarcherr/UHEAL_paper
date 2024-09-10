@@ -80,7 +80,7 @@ abr_sub_trace.age  = age';
 abr_sub_trace.gender = gender';
 
 
-save('/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_ABR/_outputs/abr_data_table/abr_sub_trace','-struct','abr_sub_trace')
+save('/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_outputs/abr_data_table/abr_sub_trace','-struct','abr_sub_trace')
 
 
 %% plot
