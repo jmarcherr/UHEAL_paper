@@ -4,6 +4,7 @@ cd(fileparts(matlab.desktop.editor.getActiveFilename))
 d = dir('_outputs/_derivatives/*.mat')
 
 for s=1:length(d)
+   
     load([d(s).folder filesep d(s).name])
     extract_aep_data
     clc
@@ -12,7 +13,7 @@ end
 
 
 %% plot
-load('/work1/jonmarc/UHEAL_master/UHEAL/uheal_data.mat')
+load('/work3/jonmarc/UHEAL_master/UHEAL/uheal_data.mat')
 
 % get age groups
 idx = ~uheal_data.CP_new
@@ -64,7 +65,7 @@ hleg = legend([pmean_y(1).mainLine pmean_m(1).mainLine pmean_o(1).mainLine],{'Yo
 hleg.Box = 'off'
 hleg.Position = [0.1310 0.2386 0.1491 0.2059];hleg.FontSize = 10;hleg.FontName = 'Arial'
 fig = gcf;
-saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs/AEP_all','epsc')
+saveas(fig,'/work3/jonmarc/UHEAL_paper/_eeg/_AEP/_outputs/figs/AEP_all','epsc')
 % plot N1,P2 and P2-N1
 com_sub =  p2_sub-n1_sub;
 
@@ -100,7 +101,7 @@ hleg.FontSize = 10;
 hleg.FontName = 'Arial'
 box off
 fig=gcf
-saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs/n100_age_group','epsc')
+%saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs/n100_age_group','epsc')
 
 % P2
 figure('Renderer','painter')
@@ -126,7 +127,7 @@ xlim([0.5 2.5])
 ylim([-0.5 3])
 fig=gcf
 box off
- saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs/p200_age_group','epsc')
+ %saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs/p200_age_group','epsc')
 
 % P2-N1 complex
 % P2
@@ -173,7 +174,7 @@ hleg.FontName = 'Arial'
 hleg.Position = [0.1327 0.7072 0.4963 0.2105]
 
 fig = gcf;
-saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs/P2N1_all','epsc')
+%saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs/P2N1_all','epsc')
     % for stats
 %  for ii=1:length(com_sub)
 %     pfit(ii,:) = polyfit([0:3],com_mean_sub(ii,:)',1);
@@ -207,7 +208,7 @@ xlim([0.5 2.5])
 ylim([-0.5 3])
 fig=gcf
 box off
- saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs/p50_age_group','epsc')
+ %saveas(fig,'/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_AEP/_outputs/figs/p50_age_group','epsc')
 %% plot stim
 close all
 figure('renderer','painters')
