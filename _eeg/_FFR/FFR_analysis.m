@@ -102,8 +102,8 @@ try
     data_ffr.fft_freq   = f';
     data_ffr.FFR        = FFR';
     data_ffr.FFR_SNR    = SNR';
-    data_ffr.FFR_TS     = data_trial; % uncomment for faster execution
-    data_ffr.FFR_trials = data_cc;
+    data_ffr.FFR_TS     = data_trial;
+    %data_ffr.FFR_trials = data_cc;  % uncomment for faster execution
     data_ffr.time       = data.time{1}';
     data_ffr.F          = F';
     data_ffr.F_crit     = F_crit';
