@@ -6,7 +6,7 @@ d = dir('/work3/jonmarc/UHEAL_paper/_eeg/_FFR/_outputs/_derivatives/*.mat')
 clc
 for s=1:length(d)
     load([d(s).folder filesep d(s).name]);
-    extract_ffr_data_dss;
+    extract_ffr_data_mcca;
 
     disp([subid{s} ' done...'])
 end
