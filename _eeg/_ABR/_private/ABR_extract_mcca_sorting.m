@@ -89,6 +89,19 @@ plot(t_abr(1,:),z(:,i(ii)))
 subtitle(['SC ' num2str(i(ii))])
 end
 set(gcf,'position',[250 122 339 589])
+
+
+%% weight maps components
+figure(700)
+set(gcf,'renderer','painters')
+for cc=1:9
+    subplot(3,3,cc)
+        jm_topoplot(squeeze(nanmean(z((1:16)*cc,:),2)),[],[],0)
+        subtitle(['SC' num2str(cc)])
+        set(gca,'Fontsize',10)
+end
+set(gcf,'position',[797 304 471 395])
+fig = gcf;
 %%
 figure
 data_z = nan(size(sub_abr));
@@ -224,4 +237,29 @@ for dd=1:length(AP_amp_pm(idx))
     else
     end
 
+end
+
+%%
+function c=jm_topoplot(var1,zlim,tit_string,coff)
+load('/work3/jonmarc/UHEAL_master/UHEAL/_EEG/_func/topo_default.mat');
+freq.powspctrm = var1;%nanmean(F_sub(YNH_idx,:))';
+cfg = [];
+cfg.comment = 'no';
+cfg.marker = 'on';
+cfg.maarkersymbol = '.';
+cfg.layout = 'biosemi64.lay';
+cfg.channel = freq.cfg.channel;
+cfg.parameter = 'powspctrm';
+cfg.style = 'straight';
+cfg.zlim = zlim;
+ft_topoplotER(cfg,freq);
+title(tit_string)
+ft_hastoolbox('brewermap', 1);         % ensure this toolbox is on the path
+colormap(flip(brewermap(100,'BrBG'))) % change the colormap
+%colormap(brewermap(64,'YlOrRd')) % change the colormap
+if coff
+    c=colorbar;
+else
+    c=nan;
+end
 end

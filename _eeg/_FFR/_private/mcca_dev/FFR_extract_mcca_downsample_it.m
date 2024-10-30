@@ -22,85 +22,213 @@ m = find(age>25 & age<50 & CP' & sig_avg);
 o = find(age>=50 & CP' & sig_avg);
 nh = find(CP' & sig_avg);
 nh_all = find(CP' & ~isnan(TS_sub(:,1,1))')
+idx_all = find(~isnan(TS_sub(:,1,1))');
 
 % get colormap
 uheal_colormap;
 
-%% mcca
-nchans = 16
-%x = permute(squeeze(TS_sub(nh_all,1:16,tidx{1})),[3,2,1]);
-for ii=1:length(nh_all)
-    perm_idx(ii,:) = randperm(16);
-    [m,i_sub(ii,:)] = sort(perm_idx(ii,:));
-    x(:,:,ii) = permute(squeeze(TS_sub(nh_all(ii),perm_idx(ii,:),tidx{1})),[3,2,1]);
-end
-xx=x(:,:); % concatenate channelwise
-%xx = zscore(xx);
-C=xx'*xx;
-[A,score,AA]=nt_mcca(C,nchans);
-z=xx*A; % common space
-
-%% plot first 8 components
+%% channel downsampling
+% loop over channel iterations from 16 to 1
 close all
-t=0:1/fs(1):length(z)/fs(1)-1/fs(1);
-figure('Renderer','painters')
-for ii=1:8
-    subplot(8,1,ii)
-plot(t,z(:,ii))
-subtitle(['SC ' num2str(ii)])
-end
-set(gcf,'position',[440 65 560 637])
-fig = gcf;
-%saveas(fig,'figs/mcca_comp_shuffle','epsc')
- figure('Renderer','painters')
- subplot 211
-plot(t,z(:,1))
-hold on
-plot(t,z(:,2))
-legend('SC1','SC2')
-subplot 212
-plot(t,z(:,[1,2]))
-hold on
-plot(t,sum(z(:,[1,2]),2))
-xlim([-0.01 0.05])
-legend('SC1','SC2','sum')
-fig = gcf
-saveas(fig,'figs/mcca_comp_12_phase','epsc')
+for it = 16:-1:2
+    if it ==16
+        keep_chans = 1:16;
+    end
 
-% fft
-fft_sc = fft([z(:,[1,2]) sum(z(:,[1,2]),2)])/length(z)/2;
-fft_pow = abs(fft_sc(1:end/2+1,:).^2)
-f = fs(1)/2*linspace(0,1,length(fft_pow))
+    % mcca with permuted channels
+    nchans = length(keep_chans)
+    %x = permute(squeeze(TS_sub(nh_all,1:16,tidx{1})),[3,2,1]);
+    clear x
+    for ii=1:length(idx_all)
+        %perm_idx(ii,:) = randperm(nchans);
+        %[m,i_sub(ii,:)] = sort(perm_idx(ii,:));
+        x(:,:,ii) = permute(squeeze(TS_sub(idx_all(ii),keep_chans,tidx{1})),[3,2,1]);
+    end
+    xx=x(:,:); % concatenate channelwise
+    %xx = zscore(xx);
+    C=xx'*xx;
+    [A,score,AA]=nt_mcca(C,nchans);
+    z=xx*A; % common space
+
+    % %% plot first 8 components
+    % close all
+    % t=0:1/fs(1):length(z)/fs(1)-1/fs(1);
+    % figure('Renderer','painters')
+    % for ii=1:8
+    %     subplot(8,1,ii)
+    % plot(t,z(:,ii))
+    % subtitle(['SC ' num2str(ii)])
+    % end
+    % set(gcf,'position',[440 65 560 637])
+    % fig = gcf;
+    % %saveas(fig,'figs/mcca_comp_shuffle','epsc')
+    %  figure('Renderer','painters')
+    %  subplot 211
+    % plot(t,z(:,1))
+    % hold on
+    % plot(t,z(:,2))
+    % legend('SC1','SC2')
+    % subplot 212
+    % plot(t,z(:,[1,2]))
+    % hold on
+    % plot(t,sum(z(:,[1,2]),2))
+    % xlim([-0.01 0.05])
+    % legend('SC1','SC2','sum')
+    % fig = gcf
+    % %saveas(fig,'figs/mcca_comp_12_phase','epsc')
+
+    %% get fft of each component for exclusion
+    % fft
+    foi = 326;
+    for ii=1:size(z,2)
+        this_comp = z(:,ii);
+        [f_comp,fft_sub_comp(ii,:),f_fft_noise_comp,FFR_comp,F_comp(ii),SNR_comp,F_crit_comp]=get_fft_mcca(this_comp',foi,fs(1));
+    end
+    %close all
+    figure(200)
+    set(gcf,'Renderer','painters')
+    c_idx=find(F_comp>=F_crit_comp)
+    norm_F = F_comp./max(F_comp)
+    c_idx = find(norm_F>=0.5)
+    % p(1) = plot(sort(norm_F,'descend'),'r')
+    % hold on
+    % p(2) = plot(sort(norm_F(c_idx),'descend'),'k')
+    % plot(1:100,ones(1,100)*0.5,'--k')
+    % box off
+    % xlim([0 50])
+    % xlabel('component')
+    % ylabel('normalized F')
+    % legend([p(2),p(1)],'F>F_{critical}','F<F_{critical}')
+    % set(gcf,'position',[440 459 221 163])
+
+    %%
+    data_z = nan(size(TS_sub(:,keep_chans,:)));
+    FFR_mcca = nan(size(TS_sub,1),1);
+    SNR_mcca = nan(size(TS_sub,1),1);
+    sig_mcca = nan(size(TS_sub,1),1);
+    SNR_chan_mcca = nan(size(x,3),length(keep_chans));
+    a = nan(size(x,3),length(keep_chans));
+    for ss=1:size(x,3)
+        z_sub = squeeze(TS_sub(idx_all(ss),keep_chans,:))'*AA{(ss)}(:,:);
+        z_sub(:,setdiff(1:size(z,2),c_idx)) = 0;
+        data_z(idx_all(ss),:,:) = permute(z_sub*pinv(AA{ss}(:,:)),[2,1]);
+
+        % get mixing weights (see mcca_demo3)
+        a(ss,:)=squeeze(TS_sub(idx_all(ss),keep_chans,tidx{1}))*nt_normcol(z(:,1))/size(data_z,3);
+
+
+        % get fft
+        foi = [326]; % pure tone frequency
+
+        %get fft FFR mcca
+        [f_tmp,fft_sub_tmp,f_fft_noise_tmp,FFR_tmp,F_tmp,SNR_tmp,F_crit_tmp]=get_fft(squeeze(data_z(idx_all(ss),:,tidx{1})),foi,fs(s));
+        SNR_chan_mcca(idx_all(ss),:) = SNR_tmp;     
+        % get channel average SNR/FFR over remaining channels
+        [f_fft_avg,FFR_avg_tmp,F_avg_tmp,SNR_avg_tmp,F_crit_avg_tmp,sig_idx_avg_tmp,noise_avg_tmp]=get_fft_chaoi(f_tmp,fft_sub_tmp,1:length(keep_chans),foi);
+        FFR_mcca(idx_all(ss)) = FFR_avg_tmp;
+        SNR_mcca(idx_all(ss)) = SNR_avg_tmp;
+        sig_mcca(idx_all(ss)) = sig_idx_avg_tmp;
+
+        %get fft FFR raw
+        [f_tmp,fft_sub_tmp,f_fft_noise_tmp,FFR_tmp,F_tmp,SNR_tmp,F_crit_tmp]=get_fft(squeeze(TS_sub(idx_all(ss),:,tidx{1})),foi,fs(s));
+        SNR_chan_raw(idx_all(ss),:) = SNR_tmp;     
+        % get channel average SNR/FFR over remaining channels
+        [f_fft_avg,FFR_avg_tmp,F_avg_tmp,SNR_avg_tmp,F_crit_avg_tmp,sig_idx_avg_tmp,noise_avg_tmp]=get_fft_chaoi(f_tmp,fft_sub_tmp,1:length(keep_chans),foi);
+        FFR_raw(idx_all(ss)) = FFR_avg_tmp;
+        SNR_raw(idx_all(ss)) = SNR_avg_tmp;
+        sig_raw(idx_all(ss)) = sig_idx_avg_tmp;
+
+    end
+
+    % plot mean weights
+    %close all
+    figure(500)
+    set(gcf,'Renderer','painters')
+    subplot 211
+    plot(mean(a))
+    hold on
+    box off
+    xlabel('channel')
+    ylabel('weight')
+    set(gca,'xtick',1:16,'xticklabels',data.chan_labels(1:16))
+    % topografi
+    %subplot 212
+    %jm_topoplot(mean(a)',[],[],0)
+    set(gcf,'position',[440 332 361 290])
+    % find lowest weight and reject for next iteration
+    [~,min_w] = min(mean(a));
+
+    c_keep{it} = setdiff(keep_chans,keep_chans(min_w));
+    keep_chans = c_keep{it};
+
+    % get highest channel SNR
+    %FFR_mcca(idx_all(ss)) = SNR_chan_mcca();
+    %SNR_mcca(idx_all(ss)) = nanmean(SNR_chan_mcca,2);
+    %sig_mcca(idx_all(ss)) = sig_idx_avg_tmp;
+
+
+    %% plot SNR of MCCA vs. raw
+    %close all
+    figure(1000)
+    set(gcf,'Renderer','painters')
+    
+    subplot 122
+    % scatter(SNR_mcca(idx_all),SNR_sub(idx_all),'.k')
+    % xlabel('mcca SNR (dB)');ylabel('raw SNR (dB)')
+    % hold on
+    % plot([-40 60],[-40 60],'b')
+    % ylim([-40 60])
+    % xlim([-40 60])
+    % text(-30,40,['mcca: ' num2str(length(find(sig_mcca(idx_all)))) '/' num2str(length(find(idx_all))) '\newline' ,...
+    %     'raw: ' num2str(length(find(sig_avg(idx_all)))) '/' num2str(length(find(idx_all)))],'fontsize',8)
+    n_sig_mcca(it) = length(find(sig_mcca(idx_all)));
+    n_sig_raw(it) = length(find(sig_raw(idx_all)));
+    n_subs = length(find(idx_all));
+    if it==2
+        plot(n_sig_mcca(2:end)./length(idx_all)) 
+        plot(n_sig_raw(2:end)./length(idx_all))
+        xlim([2 16])
+        ylim([.75 1])
+        xlabel('nr. channels')
+        ylabel('% sig. subjects')
+
+    end
+    hold on
+
+    fig = gcf;
+
+    % SNR improvement
+    subplot 121
+    %if it==16
+    %[~,si]= sort(SNR_mcca(idx_all)-SNR_avg(idx_all)','descend')
+    %end
+    cmap_mcca=cbrewer('div','BrBG',15);
+    ps(it) = plot(1:length(idx_all),sort(SNR_mcca(idx_all)-SNR_avg(idx_all)','descend'),'color',cmap_mcca(it-1,:))
+    %plot(1:length(idx_all),SNR_mcca(idx_all(si))-SNR_avg(idx_all(si))')
+    hold on
+    plot([1 length(idx_all)],[0 0],'--k')
+    box off
+    xlabel('Subjects')
+    ylabel('\Delta SNR (dB)')
+    set(gcf,'position',[440 459 221*2 163])
+
+    %saveas(fig,'figs/dssvsmcca_scatter_reshuffle','epsc')
+
+    %% get variables for plotting
+    weight_maps{it} = a;
+    SNR_mcca_it{it} = SNR_mcca;
+    SNR_avg_it{it} = SNR_avg;
+
+end
 
 %%
-data_z = nan(size(TS_sub));
-FFR_mcca = nan(size(TS_sub,1),1);
-SNR_mcca = nan(size(TS_sub,1),1);
-sig_mcca = nan(size(TS_sub,1),1);
-SNR_chan_mcca = nan(size(SNR_sub));
-for ss=1:size(x,3)
-    z_sub = squeeze(TS_sub(nh_all(ss),:,:))'*AA{(ss)}(i_sub(ss,:),:);
-    z_sub(:,3:end) = 0;
-    data_z(nh_all(ss),:,:) = permute(z_sub*pinv(AA{ss}(:,:)),[2,1]);
+%leg_string = {2:16'};
+%legend(ps(2:end))
+colormap(cmap_mcca)
+c=colorbar;
+c.Ticks = [2:16];
+c.Limits = [0 1]
 
-    % get fft
-    foi = [326]; % pure tone frequency
-
-    %get fft FFR
-    [f_tmp,fft_sub_tmp,f_fft_noise_tmp,FFR_tmp,F_tmp,SNR_tmp,F_crit_tmp]=get_fft(squeeze(data_z(nh_all(ss),:,tidx{1})),foi,fs(s));
-    % selected channels
-    chaoi_avg = [find(strcmp(data.chan_labels,'Cz')),...
-        find(strcmp(data.chan_labels,'FCz')),...
-        find(strcmp(data.chan_labels,'Fz'))];
-    SNR_chan_mcca(nh_all(ss),:) = SNR_tmp;
-   
-
-    % get channel average SNR/FFR over Cz, Fz and FCz
-    [f_fft_avg,FFR_avg_tmp,F_avg_tmp,SNR_avg_tmp,F_crit_avg_tmp,sig_idx_avg_tmp,noise_avg_tmp]=get_fft_chaoi(f_tmp,fft_sub_tmp,chaoi_avg,foi);
-    FFR_mcca(nh_all(ss)) = FFR_avg_tmp;
-    SNR_mcca(nh_all(ss)) = SNR_avg_tmp;
-    sig_mcca(nh_all(ss)) = sig_idx_avg_tmp;
-end
 %% compare traces
 %nh_all = find(CP);
 close all
@@ -109,30 +237,21 @@ plot(squeeze(nanmean(data_z(nh_all,1:16,:)))')
 subplot 122
 plot(squeeze(nanmean(TS_sub(nh_all,1:16,:)))')
 
-%% plot SNR of DSS vs. raw
-close all
-figure('Renderer','painters')
+%%
+% scaling
+rms_dat = squeeze(rms(TS_sub(nh_all,:,:),3))
+rms_z = squeeze(rms(data_z(nh_all,:,:),3));
+data_z_sc = rms_dat.*(data_z(nh_all,:,:)./rms_z);
+
+% mean over channels and scaling
 subplot 121
-scatter(SNR_dss(CP),SNR_sub(CP))
-hold on
-plot([-40 60],[-40 60])
-ylim([-40 60])
-xlim([-40 60])
-xlabel('dss');ylabel('raw')
-title(['dss: sig = ' num2str(length(find(sig_dss(CP)))) '/' num2str(length(find(CP)))] )
+plot(time{1},mean(squeeze(nanmean(data_z_sc))))
+ylim([-0.3 0.3])
+xlim([-0.05 0.49])
 subplot 122
-scatter(SNR_mcca(CP),SNR_sub(CP))
-xlabel('mcca');ylabel('raw')
-hold on
-plot([-40 60],[-40 60])
-ylim([-40 60])
-xlim([-40 60])
-title(['mcca: sig = ' num2str(length(find(sig_mcca(CP)))) '/' num2str(length(find(CP)))])
-
-fig = gcf;
-
-saveas(fig,'figs/dssvsmcca_scatter_reshuffle','epsc')
-
+plot(time{1},mean(squeeze(nanmean(TS_sub(nh_all,1:16,:)))))
+ylim([-0.3 0.3])
+xlim([-0.05 0.49])
 %% Check correlation with age and AP
 % age
 close all
@@ -241,6 +360,36 @@ tit = title(['raw: p= ' num2str(round(pval,3)) '\newline ' ...
 tit.FontSize = 10;
 fig = gcf;
 saveas(fig,'figs/AP_corr_snr_comp','epsc')
+
+
+
+
+
+
+%%
+function c=jm_topoplot(var1,zlim,tit_string,coff)
+load('/work3/jonmarc/UHEAL_master/UHEAL/_EEG/_func/topo_default.mat');
+freq.powspctrm = var1;%nanmean(F_sub(YNH_idx,:))';
+cfg = [];
+cfg.comment = 'no';
+cfg.marker = 'on';
+cfg.maarkersymbol = '.';
+cfg.layout = 'biosemi64.lay';
+cfg.channel = freq.cfg.channel;
+cfg.parameter = 'powspctrm';
+cfg.style = 'straight';
+cfg.zlim = zlim;
+ft_topoplotER(cfg,freq);
+title(tit_string)
+ft_hastoolbox('brewermap', 1);         % ensure this toolbox is on the path
+colormap(flip(brewermap(100,'RdBu'))) % change the colormap
+%colormap(brewermap(64,'YlOrRd')) % change the colormap
+if coff
+    c=colorbar;
+else
+    c=nan;
+end
+end
 %% unused %%
 %%%%%%%%%%%%%%%%%%%%
 % %% Topoplots of SNR over channels (vertical)
@@ -399,27 +548,3 @@ saveas(fig,'figs/AP_corr_snr_comp','epsc')
 
 
 
-%%
-function c=jm_topoplot(var1,zlim,tit_string,coff)
-load('/work3/jonmarc/UHEAL_master/UHEAL/_EEG/_func/topo_default.mat');
-freq.powspctrm = var1;%nanmean(F_sub(YNH_idx,:))';
-cfg = [];
-cfg.comment = 'no';
-cfg.marker = 'on';
-cfg.maarkersymbol = '.';
-cfg.layout = 'biosemi64.lay';
-cfg.channel = freq.cfg.channel;
-cfg.parameter = 'powspctrm';
-cfg.style = 'straight';
-cfg.zlim = zlim;
-ft_topoplotER(cfg,freq);
-title(tit_string)
-ft_hastoolbox('brewermap', 1);         % ensure this toolbox is on the path
-colormap(flip(brewermap(100,'RdBu'))) % change the colormap
-%colormap(brewermap(64,'YlOrRd')) % change the colormap
-if coff
-    c=colorbar;
-else
-    c=nan;
-end
-end

@@ -11,7 +11,10 @@ if isfield(data,'FFR')
     noise_f_sub(s,:,:) = data.noise.f;
     time{s}         = data.time;
     tidx{s}         = data.tidx;
-
+    %FFR_trials = data.FFR_trials;
+    FFR_trials(s,:,:,:) = data.FFR_trials;
+    trial_step(s,:) = data.trial_step;
+  
 
     %average over Cz,Fz,FCz
     FFR_avg(s)      = data.F_avg;
@@ -44,6 +47,7 @@ else
     age(s) = data.subinfo.age;
     gender(s) = data.subinfo.gender;
     dat_clean(s,:,:) = nan(1,16,2458);
+    FFR_trials(s,:,:,:) = nan(10,16,2458);
 
         %average over Cz,Fz,FCz
     FFR_avg(s)      = nan;
