@@ -78,12 +78,13 @@ try
     noise_filt = noise_w;       %weighted noise
 
     %% loop over % trials
-
+    % do 10 splits
+    for tt=1:10
     % split data 50-50
     perm_trial = randperm(size(data_cc,3));
     %tidx_FFR = find(time>=-0.1 & data.time<0.5);
 
-    nr_trials = round(steps(tt)/50*size(data_cc,3));
+    nr_trials = round(0.50*size(data_cc,3)); % 50 %
     %select random trials
     train_trial = perm_trial(1:nr_trials);
     test_trial = perm_trial(nr_trials+1:end);
@@ -94,6 +95,7 @@ try
 
     data_trials_train(tt,:,:) = data_w_train;
     data_trials_test(tt,:,:) = data_w_test;
+    end
     %%
     % ------------------------ Analysis ------------------------
     foi = [326]; % pure tone frequency
@@ -122,7 +124,7 @@ try
     data_ffr.FFR_TS     = data_trial;
     data_ffr.FFR_train  = data_trials_train;    %train trials (50%)
     data_ffr.FFR_test   = data_trials_test;     %test trials
-    data_ffr.trial_step = steps;
+    %data_ffr.trial_step = steps;
     data_ffr.time       = data.time{1}';
     data_ffr.F          = F';
     data_ffr.F_crit     = F_crit';
