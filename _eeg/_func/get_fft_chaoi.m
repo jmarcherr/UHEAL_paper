@@ -28,6 +28,7 @@ end
 
 %SNR & FFR amplitude
 SNR_avg = db(this_fft(find(f==fid)))-db(this_noise);
+%SNR_avg = db(this_fft(find(f==fid))/this_noise);
 FFR_avg =this_fft(find(f==fid));
 
 end

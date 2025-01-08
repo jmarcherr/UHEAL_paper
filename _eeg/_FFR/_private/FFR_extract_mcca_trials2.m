@@ -84,8 +84,9 @@ saveas(fig,'figs/trials2/data_TS_16','svg')
         [f_tmp,fft_sub_tmp,~,~,~,SNR_tmp,~]=get_fft(squeeze(data_z(idx_all(ss),:,tidx{1})),foi,fs(s));
         SNR_chan_mcca(idx_all(ss),:) = SNR_tmp;
         % get channel average SNR/FFR over remaining channels
-        [~,FFR_avg_tmp,~,SNR_avg_tmp,~,sig_idx_avg_tmp,~]=get_fft_chaoi(f_tmp,fft_sub_tmp,1:16,foi);
+        [~,FFR_avg_tmp,~,SNR_avg_tmp,~,sig_idx_avg_tmp,this_noise]=get_fft_chaoi(f_tmp,fft_sub_tmp,1:16,foi);
         FFR_mcca(idx_all(ss)) = FFR_avg_tmp;
+        FFR_mcca_noise(idx_all(ss)) = this_noise;
         SNR_mcca(idx_all(ss)) = SNR_avg_tmp;
         sig_mcca(idx_all(ss)) = sig_idx_avg_tmp;
 
@@ -103,9 +104,12 @@ saveas(fig,'figs/trials2/data_TS_16','svg')
     weight_maps{tt} = a;
     SNR_mcca_it{tt} = SNR_mcca;
     SNR_avg_it{tt} = SNR_raw;
+    FFR_mcca_it{tt} = FFR_mcca;
+    FFR_mcca_noise_it{tt} = FFR_mcca_noise;
+    FFR_raw_it{tt} = FFR_raw
     c_idx_it{tt} = c_idx;
-    sig_mcca_it{tt} = sig_mcca(idx_all);
-    sig_raw_it{tt}  =
+    sig_mcca_it{tt} = sig_mcca;
+    sig_raw_it{tt}  = sig_raw;
     n_sig_mcca(tt) = length(find(sig_mcca(idx_all)));
     n_sig_raw(tt) = length(find(sig_raw(idx_all)));
     n_subs = length(find(idx_all));
@@ -122,46 +126,100 @@ figure(1000)
 set(gcf,'Renderer','painters')
 cmap_mcca=cbrewer('div','BrBG',15);
 cmap_trials = cbrewer('div','BrBG',10);
-subplot 222
+subplot 122
 pm=plot((1:6),n_sig_mcca(1:end)./length(idx_all),'Color',cmap_mcca(12,:),'LineWidth',2)
 hold on
 pr=plot((1:6),n_sig_raw(1:end)./length(idx_all),'Color',cmap_mcca(2,:),'LineWidth',2)
-%xlim([0 100])
+xlim([0 7])
 ylim([.25 1])
+set(gca,'xtick',1:6)
 %set(gca,'ytick',[.8 .9 1],'fontsize',fsize)
 set(gca,'fontsize',fsize)
-xlabel('% trials')
+xlabel('tone nr.')
 ylabel('% sig. subjects')
 hleg = legend([pr pm],{'raw','mcca'})
 hleg.Box = 'off'
-hleg.Position = [0.6886 0.6671 0.1670 0.0850];
+hleg.Position = [0.7082 0.7673 0.1670 0.1279];
 box off
 fig = gcf;
 
-%% plot SNR per trial
-close all
-
+% plot SNR per trial
+%close all
+%figure('Renderer','painters')
 for ii=1:6
     for ss=1:length(idx_all)
-        if sig_mcca(ss) == 1
+        if sig_mcca_it{tt}(idx_all(ss)) == 1
         this_mcca(ss,ii) = SNR_mcca_it{ii}(idx_all(ss));
-        this_raw(ss,ii) = SNR_avg_it{ii}(idx_all(ss))
+        this_FFR_mcca(ss,ii) = FFR_mcca_it{ii}(idx_all(ss))
+        this_FFR_mcca_noise(ss,ii) = FFR_mcca_noise_it{tt}(idx_all(ss))
+        this_raw(ss,ii) = SNR_avg_it{ii}(idx_all(ss));
+        this_FFR_raw(ss,ii) = FFR_raw_it{ii}(idx_all(ss));
         else
             this_mcca(ss,ii) = nan;
             this_raw(ss,ii) = nan;
+            this_FFR_mcca(ss,ii) = nan;
+            this_FFR_raw(ss,ii) = nan;
+            this_FFR_mcca_noise(ss,ii)=nan;
         end
     end
    
 end
-plot(1:6,nanmean(this_mcca))
-%hold on
-%plot(1:6,nanmean(this_raw))
-%plot(1:6,nanmean(this_mcca(y,:)))
-%plot(1:6,nanmean(this_mcca(o,:)))
+gg = {y_idx,m_idx,o_idx};
+cmap_yom = {y_col,m_col,o_col};
+for g = 1:3
 
+    for tt=1:6
+        this_sig = find(sig_mcca_it{tt}(idx_all(gg{g})));
+        sig_len(g,tt) = length(this_sig)
+        %SNR
+        subplot 121
+        this_mean_SNR(tt,g) = nanmean(this_mcca(gg{g}(this_sig),tt));
+        hold on
+        eb(g) = errorbar(tt+g*0.1,nanmean(this_mcca(gg{g}(this_sig),tt)),nanstd(this_mcca(gg{g}(this_sig),tt))/sqrt(sig_len(g,tt)),'o','Color',cmap_yom{g},'MarkerFaceColor',cmap_yom{g})
+        % %FFR
+        % subplot(1,3,2)
+        % hold on
+        % errorbar(tt+g*0.1,db(nanmean(this_FFR_mcca(gg{g}(this_sig),tt)),'Voltage',1e-6),nanstd(db(this_FFR_mcca(gg{g}(this_sig),tt),'Voltage',1e-6))/sqrt(sig_len(g,tt)),'o','Color',cmap_yom{g})
+        % this_mean_FFR(tt,g) = nanmean(this_FFR_mcca(gg{g}(this_sig),tt));
+        % %noise
+        % subplot(1,3,2)
+        % hold on
+        % errorbar(tt+g*0.1,db(nanmean(this_FFR_mcca_noise(gg{g}(this_sig),tt)),'Voltage',1e-6),nanstd(db(this_FFR_mcca_noise(gg{g}(this_sig),tt),'Voltage',1e-6))/sqrt(sig_len(g,tt)),'o','Color',cmap_yom{g})
+        % this_mean_FFR_noise(tt,g) = nanmean(this_FFR_mcca_noise(gg{g}(this_sig),tt));
+    end
+    % SNR
+    subplot 121
+    hold on
+    plot([1:6]+g*0.1,this_mean_SNR(:,g),'color',cmap_yom{g})
+    xlim([0 7])
+    set(gca,'xtick',1:6)
+    xlabel('tone nr.')
+    ylabel('mcca FFR_{SNR} dB')
+    ylim([20 37])
+    set(gca,'Fontsize',fsize)
+    
+    % 
+    % % FFR
+    % subplot(1,3,2)
+    % plot([1:6]+g*0.1,db(this_mean_FFR(:,g),'Voltage',1e-6),'Color',cmap_yom{g})
+    % xlim([0 7])
+    % set(gca,'xtick',1:6)
+    % xlabel('Tone nr.')
+    % 
+    % % noise
+    % subplot(1,3,2)
+    % plot([1:6]+g*0.1,db(this_mean_FFR_noise(:,g),'Voltage',1e-6),'Color',cmap_yom{g})
+    % xlim([0 7])
+    % set(gca,'xtick',1:6)
+    % xlabel('Tone nr.')
+end
 
-
-
+hleg =legend([eb(1) eb(2) eb(3)],'Young','Mid. aged','Older')
+hleg.Box = 'off'
+hleg.Position = [0.1547 0.1805 0.2071 0.1860];
+set(gcf,'position',[440 305 560 301]);
+fig = gcf;
+saveas(fig,'figs/trials2/FFR_mcca','svg')
 %%
 function c=jm_topoplot(var1,zlim,tit_string,coff)
 load('/work3/jonmarc/UHEAL_master/UHEAL/_EEG/_func/topo_default.mat');
