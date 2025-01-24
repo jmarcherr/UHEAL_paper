@@ -82,6 +82,24 @@ abr_sub_trace.gender = gender';
 
 save('/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_outputs/abr_data_table/abr_sub_trace','-struct','abr_sub_trace')
 
+%% get groups
+
+close all
+figure('renderer','painters')
+YNH_idx = find(abr_sub_trace.age<=25 & ~abr_sub_trace.CP & ~abr_sub_trace.rjt_sub); 
+MANH_idx = find(abr_sub_trace.age>25 & abr_sub_trace.age<50 & ~abr_sub_trace.CP & ~abr_sub_trace.rjt_sub);
+ONH_idx = find(abr_sub_trace.age>=50 & ~abr_sub_trace.CP & ~abr_sub_trace.rjt_sub);
+HI_idx = find(abr_sub_trace.CP & ~abr_sub_trace.rjt_sub & abr_sub_trace.age>30);
+%subplot(1,3,[1 2])
+sub_abr_YNH = abr_sub_trace.sub_abr_b(YNH_idx,:);
+sub_abr_MNH = abr_sub_trace.sub_abr_b(MANH_idx,:);
+sub_abr_ONH = abr_sub_trace.sub_abr_b(ONH_idx,:);
+
+sub_abr_group{1} = sub_abr_YNH;
+sub_abr_group{2} = sub_abr_MNH;
+sub_abr_group{3} = sub_abr_ONH;
+
+[fig5a]=plot_abr_group(abr_sub_trace.t_abr(:,1)',sub_abr_group)
 
 %% plot
 load('/work3/jonmarc/UHEAL_master/UHEAL/uheal_data.mat')
@@ -138,5 +156,198 @@ for dd=1:length(AP_amp_pm(idx))
     hold off
     else
     end
+
+end
+
+%% plotting fucntions
+function [fig1,fig2]=plot_abr(t_abr,sub_abr,age)
+cm = cbrewer('qual','Set1',10)
+cmap = cm([1 2 10],:);
+rate_colors = {'k',[0.5 0.5 0.5]};
+%rate_colors = {cmap(1,:),cmap(2,:),cmap(3,:)};
+%subplot(1,3,[1 2])
+% loop over rates
+for kk=1:2
+    
+    abr_var=squeeze(nanstd(sub_abr(:,kk,:)))/sqrt(length(find(~isnan(sub_abr(:,1,1)))));
+    abr_mean = squeeze(nanmean(sub_abr(:,kk,:)))';
+    %sb=shadedErrorBar(t_abr,abr_mean,abr_var,...
+    %'lineprops',['-' rate_colors{kk}],'transparent',0);
+%     if kk==2
+%     sb.mainLine.Color = [0.5 0.5 0.5]
+%     sb.FaceColor = [0.4 0.4 0.4];
+%     sb.edge(1).Color = [0.3 0.3 0.3];
+%     sb.edge(2).Color = [0.3 0.3 0.3]
+%     end
+
+    hold on
+    p(kk)=plot(t_abr,abr_mean,'color',rate_colors{kk},'linewidth',2);
+
+    hold on
+end
+        xlim([-.5e-3 8e-3])%changed from 6e-3 to 8e-3
+        ylim([-.2 .4])
+        hold on
+        box off
+        %grid on
+        
+        
+ plot(t_abr,zeros(size(t_abr)),'k--');
+   
+
+hleg = legend([p(1) p(2)],'9 Hz','40Hz');
+hleg.Box = 'off';
+%hleg.Position = [[0.1976 0.7609 0.4444 0.0964]];
+
+set(gca,'fontsize',12,'xtick',[0:1:8]*1e-3)
+%set(gca,'TickLabelInterpreter','latex');
+ylabel('Amplitude\muV');
+xlabel('Time (s)')  
+set(gcf,'position',[293 510 315 215])
+hleg.Position = [0.4472 0.7352 0.2794 0.1884];
+fig1=gcf;
+%axis tight
+figure
+%subplot(1,3,3)
+hist(age,100)
+xlim([0 99])
+ylim([0 8])
+xlabel('Age')
+ylabel('n')
+set(gca,'YAxisLocation','left','fontsize',12,'xtick',[25,50,75])
+set(gcf,'position',[612 510 174 215])
+ box off
+ %set(gca,'TickLabelInterpreter','latex');
+
+fig2=gcf;
+end
+
+function [fig1,fig2]=plot_abr_group(t_abr,sub_abr)
+
+        ages = [18 77];
+        % new color map
+        cmap_all = [];
+        % young
+        cmap = cbrewer('seq','Greys',(25-17)+5);
+        cmap(1:5,:) = [];
+        cmap_all = [cmap_all; cmap];
+        % middle aged
+        cmap = cbrewer('seq','Blues',(50-25)+5);
+        cmap(1:5,:) = [];
+        cmap_all = [cmap_all ; cmap];
+        % older
+        cmap = cbrewer('seq','Reds',(max(ages)-(50))+5);
+        cmap(1:5,:) = [];
+        cmap_all = [cmap_all ; cmap];
+
+        % combine
+        cmap = cmap_all;
+        cmap(find(cmap>1))=1;cmap(find(cmap<0))=0;
+        ageidx = linspace(min(ages),max(ages),size(cmap,1));
+        
+        % group colors
+        y_col = cmap(13-5,:);
+        m_col = cmap(30,:);
+        o_col = cmap(end-7,:);
+rate_colors = {y_col,m_col,o_col};
+
+%subplot(1,3,[1 2])
+% loop over groups
+for kk=1:3
+    
+    abr_var=squeeze(nanstd(sub_abr{kk}))/sqrt(length(find(~isnan(sub_abr{kk}(:,1)))));
+    abr_mean = squeeze(nanmean(sub_abr{kk}(:,:)));
+
+     shadedErrorBar(t_abr,abr_mean,abr_var,...
+     'lineprops',{'color',rate_colors{kk}},'transparent',0);
+    hold on
+    p(kk)=plot(t_abr,abr_mean,'color',rate_colors{kk},'linewidth',1);
+
+end
+        xlim([-.5e-3 8e-3])%changed from 6e-3 to 8e-3
+        ylim([-.2 .4])
+        hold on
+        box off
+        %grid on
+        
+        
+ plot(t_abr,zeros(size(t_abr)),'k--');
+   
+
+
+
+set(gca,'fontsize',12,'xtick',[0:1:8]*1e-3)
+ylabel('Amplitude\muV');
+xlabel('Time (s)')  
+set(gcf,'position',[293 510 315 215])
+
+hleg = legend([p(1) p(2) p(3)],'Young','Middle-aged','Older');
+hleg.Box = 'off';
+hleg.Position = [0.3869 0.6910 0.4444 0.2744];
+fig1=gcf;
+
+end
+function [fig1,fig2]=plot_abr_group_tiny(t_abr,sub_abr)
+
+        ages = [18 77];
+        % new color map
+        cmap_all = [];
+        % young
+        cmap = cbrewer('seq','Greys',(25-17)+5);
+        cmap(1:5,:) = [];
+        cmap_all = [cmap_all; cmap];
+        % middle aged
+        cmap = cbrewer('seq','Blues',(50-25)+5);
+        cmap(1:5,:) = [];
+        cmap_all = [cmap_all ; cmap];
+        % older
+        cmap = cbrewer('seq','Reds',(max(ages)-(50))+5);
+        cmap(1:5,:) = [];
+        cmap_all = [cmap_all ; cmap];
+
+        % combine
+        cmap = cmap_all;
+        cmap(find(cmap>1))=1;cmap(find(cmap<0))=0;
+        ageidx = linspace(min(ages),max(ages),size(cmap,1));
+        
+        % group colors
+        y_col = cmap(13-5,:);
+        m_col = cmap(30,:);
+        o_col = cmap(end-7,:);
+rate_colors = {y_col,m_col,o_col};
+
+%subplot(1,3,[1 2])
+% loop over groups
+for kk=1:3
+    
+    abr_var=squeeze(nanstd(sub_abr{kk}))/sqrt(length(find(~isnan(sub_abr{kk}(:,1,1)))));
+    abr_mean = squeeze(nanmean(sub_abr{kk}(:,1,:)))';
+
+ %    shadedErrorBar(t_abr,abr_mean,abr_var,...
+ %    'lineprops',{'color',rate_colors{kk}},'transparent',0);
+    hold on
+    p(kk)=plot(t_abr,abr_mean,'color',rate_colors{kk},'linewidth',2);
+
+end
+        xlim([-.5e-3 8e-3])%changed from 6e-3 to 8e-3
+        ylim([-.2 .4])
+        hold on
+        box off
+        %grid on
+        
+        
+ plot(t_abr,zeros(size(t_abr)),'k--');
+   
+
+%hleg = legend([p(1) p(2) p(3)],'Young','Middle-aged','Older');
+%hleg.Box = 'off';
+%hleg.Position = [0.3869 0.6910 0.4444 0.2744];
+
+set(gca,'fontsize',20,'xtick',[0:2:8]*1e-3,'Xticklabel',[0:2:8]);%[{'0'},{''},{'2'},{''},{'4'},{''},{'6'},{''},{'8'},])
+ylabel('\muV');
+xlabel('Time (ms)')  
+set(gcf,'position',[293 510 315 215])
+
+fig1=gcf;
 
 end

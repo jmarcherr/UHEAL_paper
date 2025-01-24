@@ -12,5 +12,5 @@
 # -- end of LSF options --
 
 cd //work3/jonmarc/UHEAL_paper/_eeg/_ABR/_private
-matlab -nodisplay -r run_ABR_preproc_chans -logfile log/log_preproc_abr
+matlab -nodisplay -r run_ABR_preproc_trials -logfile log/log_preproc_abr
 

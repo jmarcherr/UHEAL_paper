@@ -70,11 +70,9 @@ for itt = 1:10
             z_sub = squeeze(TS_sub(this_split(ss),1:16,:))'*AA{(ss)}(:,:);
 
             % get mixing weights for first 9 components (only for 16 channels)
-            if it==16
                 for cc=1:9
                     a_all(ss,cc,:) = squeeze(TS_sub(this_split(ss),1:16,tidx{1}))*nt_normcol(z(:,cc))/size(data_z,3);
                 end
-            end
 
             % select only relevant components
             z_sub(:,setdiff(1:size(z,2),c_idx)) = 0;

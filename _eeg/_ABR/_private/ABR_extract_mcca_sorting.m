@@ -55,21 +55,38 @@ nh_all = find(CP' & ~isnan(sub_abr(:,1,1))')
 uheal_colormap;
 
 %% mcca
+%select only relevant time data
+tidx = find(t_abr(1,:)>=-0.001 & t_abr(1,:)<=0.007);
 nchans = 16
-x = permute(squeeze(sub_abr(nh_all,1:16,:)),[3,2,1]);
+x = permute(squeeze(sub_abr(nh_all,1:16,tidx)),[3,2,1]);
 xx=x(:,:); % concatenate channelwise
 %xx = zscore(xx);
 C=xx'*xx;
 [A,score,AA]=nt_mcca(C,nchans);
 z=xx*A; % common space
 
+%% get weight maps for each subject
+
+for ss=1:size(x,3)
+    % subject specific z
+    z_sub = squeeze(sub_abr(nh_all(ss),1:16,tidx))'*AA{(ss)}(:,:);
+    % get mixing weights (see mcca_demo3)
+
+    % ABR wave 1 (mean between 0.8 and 1.5 ms)
+    tidx_w1 = find(t_abr(1,tidx)>=0.0008 & t_abr(1,tidx)<=0.0019);
+    % wave V (mean between 4ms and 6ms
+    tidx_wv=find(t_abr(1,tidx)>=0.004 & t_abr(1,tidx)<=0.006);
+
+    a(ss,:)=squeeze(sub_abr(nh_all(ss),1:16,tidx(tidx_w1)))*nt_normcol(z(tidx_w1,1))/length(tidx_w1);
+    a_wv(ss,:) = squeeze(sub_abr(nh_all(ss),1:16,tidx(tidx_wv)))*nt_normcol(z(tidx_wv,1))/length(tidx_wv);
+end
 %% plot first 8 components
 close all
 t=0:1/fs(1):length(z)/fs(1)-1/fs(1);
 figure('Renderer','painters')
 for ii=1:8
     subplot(8,1,ii)
-plot(t_abr(1,:),z(:,ii))
+plot(t_abr(1,tidx)*1e3,z(:,ii))
 subtitle(['SC ' num2str(ii)])
 end
 set(gcf,'position',[250 122 339 589])
@@ -77,54 +94,151 @@ fig = gcf;
 %saveas(fig,'figs/mcca_comp','epsc')
 
 % sort components for ABR wave 1 (mean between 0.8 and 1.5 ms)
-t_idx_w1=find(t_abr(1,:)>=0.0008 & t_abr(1,:)<=0.0019);
+t_idx_w1=find(t_abr(1,tidx)>=0.0008 & t_abr(1,tidx)<=0.0019);
+% wave V (mean between 4ms and 6ms
+t_idx_wv=find(t_abr(1,tidx)>=0.004 & t_abr(1,tidx)<=0.006);
 for ii=1:size(z,2)
+    % wave I
+    % mean
     z_w1(ii) = mean(z(t_idx_w1,ii));
-end
-[m,i]=sort(z_w1,'descend')
-figure
-for ii=1:8
-    subplot(8,1,ii)
-plot(t_abr(1,:),z(:,i(ii)))
-subtitle(['SC ' num2str(i(ii))])
-end
-set(gcf,'position',[250 122 339 589])
+    %x-correlate with eeg?
+    z_w1(ii) = max(abs(xcorr(z(t_idx_w1,ii),squeeze(mean(sub_abr(ss,1:16,t_idx_w1),2)))));
 
+    % wave V
+    % mean
+    z_wv(ii) = mean(z(t_idx_wv,ii));
+    %x-correlate with eeg?
+    z_wv(ii) = max(abs(xcorr(z(t_idx_wv,ii),squeeze(mean(sub_abr(ss,1:16,t_idx_wv),2)))));
+end
+[m,iw1] = sort(z_w1,'descend'); % wave 1 components
+[m,iwv] = sort(z_wv,'descend'); % wave V components
+
+for ii=1:9
+    % wave I
+    figure(1)
+    subplot(9,1,ii)
+    plot(t_abr(1,tidx)'*1e3,z(:,iw1(ii)))
+    subtitle(['SC ' num2str(iw1(ii))])
+    sgtitle('WI')
+    % wave V
+    figure(5)
+    subplot(9,1,ii)
+    plot(t_abr(1,tidx)'*1e3,z(:,iwv(ii)))
+    subtitle(['SC ' num2str(iwv(ii))])
+    
+end
+figure(1)
+set(gcf,'position',[600 6 339 688],'renderer','painters')
+sgtitle('WI')
+fig = gcf;
+saveas(fig,'/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_private/figs/SC_WI','svg')
+figure(5)
+set(gcf,'position',[600 6 339 688],'renderer','painters')
+sgtitle('WV')
+fig = gcf;
+saveas(fig,'/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_private/figs/SC_WV','svg')
 
 %% weight maps components
 figure(700)
 set(gcf,'renderer','painters')
 for cc=1:9
+    % wave I
+    figure(2)
     subplot(3,3,cc)
-        jm_topoplot(squeeze(nanmean(z((1:16)*cc,:),2)),[],[],0)
-        subtitle(['SC' num2str(cc)])
-        set(gca,'Fontsize',10)
+    jm_topoplot(squeeze(a(iw1(cc),:))',[],[],0)
+    subtitle(['SC' num2str(iw1(cc))])
+    set(gca,'Fontsize',10)
+    % wave V
+    figure(6)
+    subplot(3,3,cc)
+    jm_topoplot(squeeze(a_wv(iwv(cc),:))',[],[],0)
+    subtitle(['SC' num2str(iwv(cc))])
+    set(gca,'Fontsize',10)
 end
+figure(2)
 set(gcf,'position',[797 304 471 395])
+sgtitle('WI')
 fig = gcf;
+saveas(fig,'/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_private/figs/SC_top_WI','svg')
+
+figure(6)
+set(gcf,'position',[797 304 471 395])
+sgtitle('WV')
+fig = gcf;
+saveas(fig,'/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_private/figs/SC_top_WV','svg')
+
 %%
+close all
 figure
-data_z = nan(size(sub_abr));
-for ss=1:size(x,3)
-    z_sub = squeeze(sub_abr(nh_all(ss),:,:))'*AA{(ss)}(:,:);
-    %z_sub(:,1) = 0;
-    z_sub(:,[setdiff(1:length(z),i(1:5))]) = 0;
-    %z_sub(:,[1:7 9:end]) = 0;
-    data_z(nh_all(ss),:,:) = permute(z_sub*pinv(AA{ss}(:,:)),[2,1]);
+data_z = nan(size(sub_abr(:,:,tidx)));
+id_all = {iw1;iwv};tit_all = {'WI';'WV'}
+for cc = 1:5
+    for ii=1:2
+        for ss=1:size(x,3)
+            z_sub = squeeze(sub_abr(nh_all(ss),:,tidx))'*AA{(ss)}(:,:);
+            %z_sub(:,1) = 0;
+            z_sub(:,[setdiff(1:length(z),id_all{ii}(1:cc))]) = 0;
+            %z_sub(:,[1:7 9:end]) = 0;
+            data_z(nh_all(ss),:,:) = permute(z_sub*pinv(AA{ss}(:,:)),[2,1]);
+
+        end
+        % scaling
+        rms_dat = squeeze(rms(sub_abr(nh_all,:,tidx),3))
+        rms_z = squeeze(rms(data_z(nh_all,:,:),3));
+        data_z_sc = rms_dat.*(data_z(nh_all,:,:)./rms_z);
+
+        % mean over subjects
+        figure(cc)
+        subplot(1,3,ii+1)
+        plot(t_abr(1,tidx)*1e3,squeeze(nanmean(data_z_sc))')
+        title(['mcca ' tit_all{ii}])
+        ylim([-0.3 0.3])
+        xlim([-0.001 0.007]*1e3)
+        box off
+
+        %single subject
+        figure(cc*10)
+        subplot(1,3,ii+1)
+        plot(t_abr(1,tidx),squeeze(nanmean(data_z_sc(3,:,:)))')
+        title(['mcca sub ' tit_all{ii}])
+       
+
+    end
+    %mean
+    figure(cc)
+    subplot 131
+    plot(t_abr(1,:)*1e3,squeeze(nanmean(sub_abr)))
+    title('raw')
+    ylim([-0.3 0.3])
+    xlim([-0.001 0.007]*1e3)
+    box off
+
+    set(gcf,'renderer','painters','position',[440 410 560 196])
+    fig = gcf;
+    saveas(fig,['/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_private/figs/mcca_components_WIV_' num2str(cc)],'svg')
+
+    %single subject
+    figure(cc*10)
+    subplot 131
+    plot(t_abr(1,tidx),squeeze(nanmean(sub_abr(nh_all(3),:,tidx))))
+    title('raw single subject')
+
+    set(gcf,'renderer','painters','position',[440 410 560 196])
+    fig = gcf;
+    saveas(fig,['/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_private/figs/mcca_components_WIV_single' num2str(cc)],'svg')
+
 
 end
-subplot 121
-plot(t_abr(1,:),squeeze(nanmean(data_z))')
-subplot 122
-plot(t_abr(1,:),squeeze(nanmean(sub_abr)))
 
+%% single subject
 
-%% plotting just one subject
-close all
-subplot 121
-plot(t_abr(1,:),squeeze(nanmean(data_z(4,:,:)))')
-subplot 122
-plot(t_abr(1,:),squeeze(nanmean(sub_abr(4,:,:))))
+        subplot 122
+        plot(t_abr(1,tidx),squeeze(nanmean(data_z_sc(3,:,:)))')
+        title('mcca wI single subject')
+        subplot 121
+        plot(t_abr(1,tidx),squeeze(nanmean(sub_abr(nh_all(3),:,tidx))))
+        title('raw single subject')
+
 
 %% get peaks
 for ss=1:size(data_z,1)
