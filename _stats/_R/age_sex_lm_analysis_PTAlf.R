@@ -10,10 +10,10 @@ library(plotrix)               # Load plotrix
 library(knitr)
 
 # load data
-setwd('/work1/jonmarc/UHEAL_master/UHEAL_paper/_stats/')
+setwd('/work3/jonmarc/UHEAL_paper/_stats/')
 uheal_data <- read.csv("uheal_table.csv", header=TRUE, stringsAsFactors=FALSE)
 uheal_data <- filter(uheal_data, CP_new == 0)
-setwd('/work1/jonmarc/UHEAL_master/UHEAL_paper/_stats/_R/lm_models')
+setwd('/work3/jonmarc/UHEAL_paper/_stats/_R/lm_models')
 
 # Make categorical variables into factors:
 uheal_data$subid <- factor(uheal_data$subid)
@@ -72,6 +72,7 @@ for (c in c('PTA_hf',
             'FFR_SNR','FFR_noise','EFR_SNR','EFR_noise',
             'Neg_4Hz','ITPC_ratio',
             'AEP_p2n1_int',
+            'ABR_NF_slope','ABR_NF_int',
             'acalos_AC_slope_1','acalos_AC_slope_2','acalos_AC_slope_3','acalos_AC_slope_4',
             'rds','nesi','tts','ssq12_mean')){
   temp=print(summary(lm(paste(c,"~ Age+sex+PTA_lf"), data=uheal_data)))
@@ -115,6 +116,7 @@ rownames(age_tab) <-c('PTA_hf',
                       'FFR_SNR','FFR_noise','EFR_SNR','EFR_noise',
                       'Neg_4Hz','ITPC_ratio',
                       'AEP_p2n1_int',
+                      'ABR_NF_slope','ABR_NF_int',
                       'acalos_AC_slope_1','acalos_AC_slope_2','acalos_AC_slope_3','acalos_AC_slope_4',
                       'rds','nesi','tts','ssq12_mean')
 age_tab
@@ -140,6 +142,7 @@ rownames(sex_tab) <-c('PTA_hf',
                       'FFR_SNR','FFR_noise','EFR_SNR','EFR_noise',
                       'Neg_4Hz','ITPC_ratio',
                       'AEP_p2n1_int',
+                      'ABR_NF_slope','ABR_NF_int',
                       'acalos_AC_slope_1','acalos_AC_slope_2','acalos_AC_slope_3','acalos_AC_slope_4',
                       'rds','nesi','tts','ssq12_mean')
 sex_tab
@@ -164,6 +167,7 @@ rownames(pta_tab) <-c('PTA_hf',
                       'FFR_SNR','FFR_noise','EFR_SNR','EFR_noise',
                       'Neg_4Hz','ITPC_ratio',
                       'AEP_p2n1_int',
+                      'ABR_NF_slope','ABR_NF_int',
                       'acalos_AC_slope_1','acalos_AC_slope_2','acalos_AC_slope_3','acalos_AC_slope_4',
                       'rds','nesi','tts','ssq12_mean')
 pta_tab

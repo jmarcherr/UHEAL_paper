@@ -1,8 +1,8 @@
 close all
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/work1/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
-load('/work1/jonmarc/UHEAL_master/UHEAL_paper/_stats/uheal_data.mat')
+run('/work3/jonmarc/UHEAL_paper/UHEAL_startup.m')
+load('/work3/jonmarc/UHEAL_paper/_stats/uheal_data.mat')
 
 data = uheal_data;
 %% age distribution
@@ -104,17 +104,17 @@ var = 'rds';
 labels = 'R. digit-span score'
 lims = [0 30];
 figure
-[h,hleg,ax1,ax2]=stat_plots_uh_age(data,var,labels,lims)
-hleg.Position = [0.5320 0.7793 0.2155 0.1272]
-set(hleg,'Visible','off')
+[h,ax1,ax2]=stat_plots_uh_age_pt(data,var,labels,lims)
+%hleg.Position = [0.5320 0.7793 0.2155 0.1272]
+%set(hleg,'Visible','off')
 % SSQ
 var = 'ssq12_mean';
 labels = 'SSQ-12 score'
 lims = [0 12];
 figure
-[h,hleg,ax1,ax2]=stat_plots_uh_age(data,var,labels,lims)
-hleg.Position = [0.5320 0.7793 0.2155 0.1272]
-set(hleg,'Visible','off')
+[h,ax1,ax2]=stat_plots_uh_age_pt(data,var,labels,lims)
+%hleg.Position = [0.5320 0.7793 0.2155 0.1272]
+%set(hleg,'Visible','off')
 % NESI log 10
 uheal_data.nesi(isinf(uheal_data.nesi))=nan; data=uheal_data;
 data.nesi(find(~isnan(data.nesi))) = log10(data.nesi(find(~isnan(data.nesi))));
@@ -122,17 +122,17 @@ var = 'nesi';
 labels = 'log_{10}(NESI)'
 lims = [-2 3];
 figure
-[h,hleg,ax1,ax2]=stat_plots_uh_age(data,var,labels,lims)
-hleg.Position = [0.5320 0.7793 0.2155 0.1272]
-set(hleg,'Visible','off')
+[h,ax1,ax2]=stat_plots_uh_age_pt(data,var,labels,lims)
+%hleg.Position = [0.5320 0.7793 0.2155 0.1272]
+%set(hleg,'Visible','off')
 % TTS
 var = 'tts';
 labels = 'TTS score'
 lims = [-1 8];
 figure
-[h,hleg,ax1,ax2]=stat_plots_uh_age(data,var,labels,lims)
-hleg.Position = [0.5320 0.7793 0.2155 0.1272]
-set(hleg,'Visible','off')
+[h,ax1,ax2]=stat_plots_uh_age_pt(data,var,labels,lims)
+%hleg.Position = [0.5320 0.7793 0.2155 0.1272]
+%set(hleg,'Visible','off')
 
 %% cortical EEG
 close all
@@ -144,8 +144,8 @@ figure
 [h,ax1,ax2]=stat_plots_uh_age_pt(data,var,labels,lims)
 %hleg.Position = [0.5320 0.7793 0.2155 0.1272]
 %set(hleg,'Visible','off')
-set(gcf,'position',[462 556 297 197])
-%set(ax1,'FontSize',11);set(ax2,'FontSize',11)
+%set(gcf,'position',[462 556 297 197])
+set(ax1,'FontSize',11);set(ax2,'FontSize',11)
 
 %4Hz itpc_ratio
 var = 'ITPC_ratio';
@@ -155,8 +155,8 @@ figure
 [h,ax1,ax2]=stat_plots_uh_age_pt(data,var,labels,lims)
 %hleg.Position = [0.5320 0.7793 0.2155 0.1272]
 %set(hleg,'Visible','off')
-set(gcf,'position',[462 556 297 197])
-%set(ax1,'FontSize',11);set(ax2,'FontSize',11)
+%set(gcf,'position',[462 556 297 197])
+set(ax1,'FontSize',11);set(ax2,'FontSize',11)
 %% cortical AEP
 close all
 % n100
@@ -167,7 +167,8 @@ figure
 [h,ax1,ax2]=stat_plots_uh_age_pt(data,var,labels,lims)
 %hleg.Position = [0.5320 0.7793 0.2155 0.1272]
 %set(hleg,'Visible','off')
-set(gcf,'position',[462 556 297 197])
+%set(gcf,'position',[462 556 297 197])
+%set(ax1,'FontSize',11);set(ax2,'FontSize',11)
 
 %p200
 var = 'AEP_p2';
@@ -177,17 +178,18 @@ figure
 [h,ax1,ax2]=stat_plots_uh_age_pt(data,var,labels,lims)
 %hleg.Position = [0.5320 0.7793 0.2155 0.1272]
 %set(hleg,'Visible','off')
-set(gcf,'position',[462 556 297 197])
+%set(gcf,'position',[462 556 297 197])
+%set(ax1,'FontSize',11);set(ax2,'FontSize',11)
 
 %% AEP P2-N1
 var = 'AEP_p2n1_int';
 labels = 'P2-N1 intercept'
-lims = [-6 8];
+lims = [-8 8];
 figure
 [h,ax1,ax2]=stat_plots_uh_age_pt(data,var,labels,lims)
 %hleg.Position = [0.5320 0.7793 0.2155 0.1272]
 %set(hleg,'Visible','off')
-set(gcf,'position',[100 100 297 197]*(96/72))
+%set(gcf,'position',[100 100 297 197]*(96/72))
 
 %%
 clear tmp_data
@@ -210,7 +212,7 @@ isize = size(find(nanidx));
 
 tmp_data.isi = [zeros(isize);ones(isize);ones(isize)*2;ones(isize)*3];   
 tmp_table = struct2table(tmp_data')
-writetable(tmp_table,'/Users/jmarcher/Documents/_postdoc/UHEAL_paper/_statsR/isi_AEP/isi_table.csv')
+%writetable(tmp_table,'/Users/jmarcher/Documents/_postdoc/UHEAL_paper/_statsR/isi_AEP/isi_table.csv')
 %%
 for ii=1:length(unique(tmp_data.subid))
 p(ii,:) = polyfit(tmp_data.isi(tmp_data.subid==tmp_data.subid(ii)),tmp_data.n1p2_cmp(tmp_data.subid==tmp_data.subid(ii)),1);

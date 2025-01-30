@@ -1,8 +1,8 @@
 close all
 clear all
 %cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/work1/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
-load('/work1/jonmarc/UHEAL_master/UHEAL_paper/_stats/uheal_data.mat')
+run('/work3/jonmarc/UHEAL_paper/UHEAL_startup.m')
+load('/work3/jonmarc/UHEAL_paper/_stats/uheal_data.mat')
 %%
 
 % preprocessing
@@ -400,17 +400,17 @@ fig=gcf;
 set(fig,'renderer','painters')
 %cd(root
 set(gcf,'position',[100 100 397 400]*(96/72))
-%saveas(fig,['figs/corr_eeg'],'epsc')
+saveas(fig,['figs/corr_eeg'],'svg')
 %% correlation with questionaires
 uheal_nh.nesi_log = log10(uheal_nh.nesi); uheal_nh.nesi_log(isinf(uheal_nh.nesi_log))=nan;
 clinnames = {'nesi_log','tts','ssq12_mean','PTA_lf','PTA_hf','memr_slope'}
-eegnames = {'AP_amp_pm','FFR_SNR','itpc_ratio_4Hz','neg_4Hz'};
+eegnames = {'AP_amp_pm','FFR_SNR','ITPC_ratio','Neg_4Hz'};
 peegnames = {'AP','FFR','ITPC','Neg. 4Hz','N1','P2'};
 pclinnames = {'NESI','TTS','SSQ12','PTA_{lf}','PTA_{hf}','MEMR'}
 clear p rho
 close all
 figure('renderer','painters')
-set(gcf,'position',[119 784 356 311])
+%set(gcf,'position',[119 784 356 311])
 cc=0;
 for ii=1:length(clinnames)
     for jj=1:length(eegnames)
@@ -451,7 +451,7 @@ end
 p_plot = p';p_plot = p_plot(:);p_plot = p_plot*length(p_plot);
 rho_plot = rho';rho_plot = rho_plot(:)
 figure('renderer','painters')
-set(gcf,'position',[119 784 356 311])
+%set(gcf,'position',[119 784 356 311])
 for pp = 1:length(p_plot)
 
     subplot(6,6,pp)
@@ -460,9 +460,10 @@ for pp = 1:length(p_plot)
             circ = nsidedpoly(1000, 'Center', [0 0], 'Radius', abs(rho_plot(pp)/max(abs(rho_plot))));
         ccol = {'r','b'}
         if rho_plot(pp)<0
-        circp=plot(circ,'EdgeColor',cmap{2},'FaceColor','none','Linewidth',2);%circp.EdgeAlpha = 0.2;
+        circp=plot(circ,'EdgeColor',cmap(1,:),'FaceColor','none','Linewidth',2);%circp.EdgeAlpha = 0.2;
         else
-            circp=plot(circ,'EdgeColor',cmap{3},'FaceColor','none','Linewidth',2);%circp.EdgeAlpha = 0.2;
+            circp=plot(circ,'EdgeColor',cmap(2,:) ...
+                ,'FaceColor','none','Linewidth',2);%circp.EdgeAlpha = 0.2;
         end
         xlim([-1.5 1.5])
         ylim([-1.5 1.5])

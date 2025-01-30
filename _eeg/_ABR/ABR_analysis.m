@@ -31,10 +31,22 @@ try
     %1 = click, 80 nHL, 9.1Hz
     %2 or 3 = click, 80 nHL, 40Hz
     trial_info = unique(data.trialinfo);
-
+    
     % loop over rates (9/s and 40/s)
     rate_ids = [9,40];
+    % check for rates
+    if length(trial_info)<2
+        % only 1 rate
+        if trial_info<2
+            % 9 Hz rate
+            rate = 1;
+        else
+            % 40 Hz rate
+            rate = 2;
+        end
+    else
     rate = 1:2;
+    end
     for kk=[rate] % condition loop
 
         trials_oi =find(data.trialinfo==trial_info(kk)); % condition trials
@@ -57,7 +69,7 @@ try
         data_cc = [];
         % reject if less than half the trials remain
         if length(valid_trials)<3000
-            warning(['Less than half of trials are clean. Rejecting ' rateids(kk) '/s data from subject' data.subid])
+            warning(['Less than half of trials are clean. Rejecting ' rate_ids(kk) '/s data from subject' data.subid])
             data_cc = nan;
         else
             data_cc = epoched_data(valid_trials,:,:);

@@ -1,0 +1,31 @@
+{Error using saveAEPdata
+Cannot create 'UH003_AEP.mat' because
+'/work3/jonmarc/UHEAL_paper/_eeg/_NFest/_outputs' does not exist.
+
+Error in run_ABR_preproc_NF (line 25)
+parfor ss=1:numsub
+} 
+{Operation terminated by user during parallel.internal.parfor.ParforEngine/getCompleteIntervals
+
+
+In parallel_function>distributed_execution (line 746)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In parallel_function (line 578)
+    R = distributed_execution(...
+
+In run_ABR_preproc_NF (line 25)
+parfor ss=1:numsub
+} 
+{Operation terminated by user during parallel.internal.parfor.ParforEngine/getCompleteIntervals
+
+
+In parallel_function>distributed_execution (line 746)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In parallel_function (line 578)
+    R = distributed_execution(...
+
+In run_ABR_preproc_NF (line 25)
+parfor ss=1:numsub
+} 

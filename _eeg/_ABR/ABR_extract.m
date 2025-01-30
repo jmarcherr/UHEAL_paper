@@ -100,6 +100,7 @@ sub_abr_group{2} = sub_abr_MNH;
 sub_abr_group{3} = sub_abr_ONH;
 
 [fig5a]=plot_abr_group(abr_sub_trace.t_abr(:,1)',sub_abr_group)
+saveas(fig5a,['/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_outputs/figs/abr_grouped'],'svg')
 
 %% plot
 load('/work3/jonmarc/UHEAL_master/UHEAL/uheal_data.mat')
@@ -159,7 +160,7 @@ for dd=1:length(AP_amp_pm(idx))
 
 end
 
-%% plotting fucntions
+%% plotting functions
 function [fig1,fig2]=plot_abr(t_abr,sub_abr,age)
 cm = cbrewer('qual','Set1',10)
 cmap = cm([1 2 10],:);

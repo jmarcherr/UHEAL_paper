@@ -1,0 +1,119 @@
+{Error using parallel.internal.parfor.ParforEngine/rebuildParforController
+The parallel pool that parfor was using has shut down. To start a new parallel
+pool, run your parfor code again or use parpool.
+
+Error in parallel.internal.parfor.ParforEngine/handleIntervalErrorResult (line 306)
+                obj.rebuildParforController();
+
+Error in parallel.internal.parfor.ParforEngine/getCompleteIntervals (line 230)
+                            [r, err] = obj.handleIntervalErrorResult(r);
+
+Error in run_AEP_preproc_NF (line 25)
+parfor ss=1:numsub
+
+Caused by:
+    Error using parallel.internal.parfor.ParforEngine/buildParforController
+    No running parallel pool. To start a new parallel pool use parpool.
+} 
+{This parallel pool has been shut down.
+
+Caused by:
+    The parallel pool shut down because the client lost connection to worker 8.
+    Check the network connection or restart the parallel pool with 'parpool'.
+} 
+{Error using parallel.internal.parfor.ParforEngine/rebuildParforController
+The parallel pool that parfor was using has shut down. To start a new parallel
+pool, run your parfor code again or use parpool.
+
+Error in parallel.internal.parfor.ParforEngine/handleIntervalErrorResult (line 306)
+                obj.rebuildParforController();
+
+Error in parallel.internal.parfor.ParforEngine/getCompleteIntervals (line 230)
+                            [r, err] = obj.handleIntervalErrorResult(r);
+
+Error in run_AEP_preproc_NF (line 25)
+parfor ss=1:numsub
+
+Caused by:
+    Error using parallel.internal.parfor.ParforEngine/buildParforController
+    No running parallel pool. To start a new parallel pool use parpool.
+} 
+{This parallel pool has been shut down.
+
+Caused by:
+    The parallel pool shut down because the client lost connection to worker 5.
+    Check the network connection or restart the parallel pool with 'parpool'.
+} 
+{Error using parallel.internal.parfor.ParforEngine/rebuildParforController
+The parallel pool that parfor was using has shut down. To start a new parallel
+pool, run your parfor code again or use parpool.
+
+Error in parallel.internal.parfor.ParforEngine/handleIntervalErrorResult (line 306)
+                obj.rebuildParforController();
+
+Error in parallel.internal.parfor.ParforEngine/getCompleteIntervals (line 230)
+                            [r, err] = obj.handleIntervalErrorResult(r);
+
+Error in run_AEP_preproc_NF (line 25)
+parfor ss=1:numsub
+
+Caused by:
+    Error using parallel.internal.parfor.ParforEngine/buildParforController
+    No running parallel pool. To start a new parallel pool use parpool.
+} 
+{This parallel pool has been shut down.
+
+Caused by:
+    The parallel pool shut down because the client lost connection to worker
+    12. Check the network connection or restart the parallel pool with
+    'parpool'.
+} 
+{Operation terminated by user during parallel.internal.parfor.ParforEngine/getCompleteIntervals
+
+
+In parallel_function>distributed_execution (line 746)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In parallel_function (line 578)
+    R = distributed_execution(...
+
+In run_AEP_preproc_NF (line 25)
+parfor ss=1:numsub
+} 
+{Operation terminated by user during parallel.internal.parfor.ParforEngine/getCompleteIntervals
+
+
+In parallel_function>distributed_execution (line 746)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In parallel_function (line 578)
+    R = distributed_execution(...
+
+In run_AEP_preproc_NF (line 25)
+parfor ss=1:numsub
+} 
+Terminated
+{Operation terminated by user during parallel.internal.parfor.ParforEngine/getCompleteIntervals
+
+
+In parallel_function>distributed_execution (line 746)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In parallel_function (line 578)
+    R = distributed_execution(...
+
+In run_AEP_preproc_NF (line 25)
+parfor ss=1:numsub
+} 
+{Operation terminated by user during parallel.internal.parfor.ParforEngine/getCompleteIntervals
+
+
+In parallel_function>distributed_execution (line 746)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In parallel_function (line 578)
+    R = distributed_execution(...
+
+In run_AEP_preproc_NF (line 25)
+parfor ss=1:numsub
+} 

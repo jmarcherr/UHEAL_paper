@@ -10,10 +10,10 @@ library(plotrix)               # Load plotrix
 library(knitr)
 
 # load data 
-setwd('/work1/jonmarc/UHEAL_master/UHEAL_paper/_stats/')
+setwd('/work3/jonmarc/UHEAL_paper/_stats/')
 uheal_data <- read.csv("uheal_table.csv", header=TRUE, stringsAsFactors=FALSE)
 uheal_data <- filter(uheal_data, CP_SG == 1)
-setwd('/work1/jonmarc/UHEAL_master/UHEAL_paper/_stats/_R/lm_models')
+setwd('/work3/jonmarc/UHEAL_paper/_stats/_R/lm_models')
 
 # Make categorical variables into factors:
 uheal_data$subid <- factor(uheal_data$subid)
