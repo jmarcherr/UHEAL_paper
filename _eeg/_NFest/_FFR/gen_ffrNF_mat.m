@@ -1,21 +1,22 @@
-function [uheal_data]=gen_abrNF_mat(uheal_data,datadir)
+function [uheal_data]=gen_ffrNF_mat(uheal_data,datadir)
 
 d = dir([datadir filesep '*.mat'])
 clc
-disp(['Processing abr_nf data ...'])
+disp(['Processing ffrNF data ...'])
 
+%% get data
 for s=1:length(d)
+    
     load([d(s).folder filesep d(s).name])
     clc
-    
+    disp(['sub ' d(s).name(1:5) ' loaded...'])
+    sub_num(s) = str2num(d(s).name(3:5));
+    chansoi = setdiff(1:16,[5 11]);
     % get FFR
-    if isfield(data,'data_w')
+    if (isfield(data,'data_w') && data.nr_reject<25)
         fs = data.fs;
         TS_sub(s,:) = nanmean(data.data_w(:,:));
-
-        TS_sub_chan(s,:,:)=data.data_w;
-
-
+        TS_sub_chan(s,:,:) = data.data_w;
         time = data.time;
       
         subinfo{s} = data.subinfo;
@@ -27,31 +28,30 @@ for s=1:length(d)
         gender(s) = data.subinfo.gender;
         end
 
+        CP(s) =  uheal_data.CP_new(find(uheal_data.subid==sub_num(s)));%data.subinfo.CP;
         nr_reject(s) =data.nr_reject;
-        sub_id{s} = data.subid;
-        sub_num(s) = str2num(sub_id{s}(end-2:end));
         
-    else
+    else 
 
         TS_sub(s,:,:) =nan(1,1536);
         TS_sub_chan(s,:,:) = nan(16,1536);
         subinfo{s} = data.subinfo;
         age(s) = data.subinfo.age;
         gender(s) = data.subinfo.gender;
-        sub_id{s} = data.subid;
-        sub_num(s) = str2num(sub_id{s}(end-2:end));
     end
 end
 
-% channels
-chansoi  =1:16;% setdiff(1:16,[5 11]); % all channels but T7 and T8   
-fs = data.fs;
+
+ %% 
+mean(nr_reject)
+std(nr_reject)
 
 
 %% get FFT
 tidx = time>=0 & time<3;
 pow_sub_chan = nan(117,16,769);coeff = nan(117,16,2);
 pow_sub = nan(117,769);coeff = nan(117,2);
+SNR = nan(117,4);NCL = nan(117,4);
 for ss = 1:length(d)
     for cc=1:length(chansoi) % channels
         M=squeeze(TS_sub_chan(ss,cc,find(tidx)));
@@ -69,12 +69,12 @@ for ss = 1:length(d)
         f = fs/2*linspace(0,1,length(ft_sub));
         % estimate noise floor
         foi = 2;
-        nbins = [];%2:2:20];
+        nbins = f(find(f<2));%2:2:20];
         aband = f(find(f>7 &  f<12));
         fitF = f(find(f>0.7 & f<20));
         fitF = setdiff(fitF,[nbins aband]);
         feedback = logical(0);
-        [est_chan(ss,cc),coeff_chan(ss,cc,:)] = NNfloorEstim(squeeze(ft_sub)',f,foi,fitF,feedback);
+        [~,coeff_chan(ss,cc,:)] = NNfloorEstim(squeeze(ft_sub)',f,foi,fitF,feedback);
         
     end
     % mean over channels
@@ -94,18 +94,18 @@ end
 
  %% save latency and amplitudes of n100
  %p50
-uheal_data.ABR_NF_slope = nan(size(uheal_data.subid,1),1);
-uheal_data.ABR_NF_int = nan(size(uheal_data.subid,1),1);
+uheal_data.FFR_NF_slope = nan(size(uheal_data.subid,1),1);
+uheal_data.FFR_NF_int = nan(size(uheal_data.subid,1),1);
 
 
 %% save
 for s=1:length(coeff)
     % get this subid
-    thisID = str2double(sub_id{s}(3:5))
+    thisID = sub_num(s)';%str2double(sub_id{s}(3:5))
     this_idx = find(uheal_data.subid==thisID);
-    uheal_data.ABR_NF_slope(this_idx,:) = coeff(s,1);
-    uheal_data.ABR_NF_int(this_idx,:) = coeff(s,2);
+    uheal_data.FFR_NF_slope(this_idx,:) = coeff(s,1);
+    uheal_data.FFR_NF_int(this_idx,:) = coeff(s,2);
 
 end
-disp(['ABR NF data done!'])
+disp(['FFR NF data done!'])
 end

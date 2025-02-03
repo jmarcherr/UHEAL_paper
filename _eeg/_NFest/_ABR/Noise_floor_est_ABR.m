@@ -92,7 +92,7 @@ for ss = 1:length(idx_all)
         % estimate noise floor
         foi = 2;
         nbins = [];%2:2:20];
-        aband = [7 12];
+        aband = f(find(f>7 &  f<12));
         fitF = f(find(f>0.7 & f<20));
         fitF = setdiff(fitF,[nbins aband]);
         feedback = logical(0);

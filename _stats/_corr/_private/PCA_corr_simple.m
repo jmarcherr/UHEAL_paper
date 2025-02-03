@@ -38,13 +38,12 @@ uheal_nh.FFR_SNR(sig_idx) = nan;
 %%
 % select variables
 zscor_xnan = @(x) bsxfun(@rdivide, bsxfun(@minus, x, mean(x,'omitnan')), std(x, 'omitnan'));
-Varnames = {'AP','FFR','ITPC','Neg. 4Hz','P2N1','NF'}
+Varnames = {'AP','FFR','Neg.','P2N1'}
 X = {zscor_xnan(uheal_nh.AP_amp_pm);
-    zscor_xnan(uheal_nh.FFR_SNR);
-    zscor_xnan(uheal_nh.ITPC_ratio);
-    zscor_xnan(uheal_nh.Neg_4Hz);
+    zscor_xnan(uheal_nh.FFR_SNR)
+    zscor_xnan(uheal_nh.Neg_4Hz)
     zscor_xnan(uheal_nh.AEP_p2n1_int);
-    zscor_xnan(uheal_nh.ABR_NF_int)};
+    };
 X = reshape(cell2mat(X),105,length(Varnames));
 X_imp = knnimpute(X);
 [coeff,score,latent,tsquared,explained]=pca(X_imp);
@@ -60,7 +59,6 @@ ylabel('Var. explained (%)')
 set(gca,'fontsize',12)
 set(gcf,'Position',[100 100 202 140]/(96/72))
 xlim([0.1 6.9])
-
 %% contributions plot
 % Variance in variable I explained by principal component J
 for i = 1:length(Varnames)
@@ -136,7 +134,7 @@ QY = coeff(:,2);
 for ii = 1:length(QX)
     plot([0 QX(ii)],[0 QY(ii)],'color',[0.5 0.5 0.5]-0.5,'linewidth',1)
     if ii==6
-        t=text(QX(ii)-0,QY(ii)-0,Varnames{ii})
+        t=text(QX(ii)-0.45,QY(ii)-0.1,Varnames{ii})
     elseif ii==5
         t=text(QX(ii)-0.3,QY(ii)+0.15,Varnames{ii})
     elseif ii==3
@@ -171,122 +169,18 @@ set(gca,'fontsize',12)
 
 fig=gcf;
 %cd(root)
-saveas(fig,['figs/pca_eeg_clean_NF'],'svg')
+saveas(fig,['figs/pca_eeg_clean_simple'],'svg')
 
 
-%% PCA C1 vs. age
-
-[s,ll]=scatteruh(uheal_nh.Age,score(:,1),uheal_nh)
-    f = gcf
-    set(f,'renderer','painters')
-f.Position = [938 371 104 141];%[939 586 192 141]
-ylabel('Dim.1')
-[rho_age,p_age]=corr(uheal_nh.Age,score(:,1))
-[rho_age2,p_age2]=corr(uheal_nh.Age,score(:,2))
-ll(1).Color = cmap_g{2}
-ll(2).Color = cmap_g{3}
-
-
-[s,ll]=scatteruh(uheal_nh.Age,score(:,2),uheal_nh)
-    f = gcf
-    set(f,'renderer','painters')
-f.Position = [938 371 104 141];%[939 586 192 141]
-ylabel('Dim.2')
-[rho_sex1,p_sex1] = corr(uheal_nh.gender,score(:,1))
-[rho_sex,p_sex]=corr(uheal_nh.gender,score(:,2))
-ll(1).Color = cmap_g{2}
-ll(2).Color = cmap_g{3}
-
-%% PC1 and PC2 vs clincal measures
-fnames = {'Age','gender','nesi','tts','ssq12_mean','rds','memr_slope'}
-pnames = {'Age','Sex','NESI','TTS','SSQ12','Digit-span','MEMR'}
-clear p rho p_corr
-c_y = [239 210 84]/255;
-c_b = [158 204 239]/255;
-close all
-figure('renderer','painters')
-for jj=1:2 % PC1 and 2
-    for ii=1:length(fnames) % NESI, TTS, SSQ12, DS, MEMR
-        thisidx = ~isnan(uheal_nh.(fnames{ii})) & ~isnan(score(:,jj));
-        if ii==2
-            [rho(jj,ii),p(jj,ii)]=corr(uheal_nh.(fnames{ii})(thisidx),...
-                score(thisidx,jj),'type','Spearman');
-        else
-            [rho(jj,ii),p(jj,ii)]=corr(zscore(uheal_nh.(fnames{ii})(thisidx)),...
-                score(thisidx,jj),'type','Spearman');
-        end
-        p_corr(jj,ii) = p(jj,ii)*length(fnames)*2;
-        
-        subplot(2,length(fnames),ii+(jj-1)*7)
-        box on
-        set(gca,'xticklabel',{},'yticklabel',{},'xtick',[],'ytick',[])
-        %titles
-        if jj==2
-            t_box = xlabel(pnames{ii})
-            t_box.FontSize = 12;
-            t_box.FontName = 'Arial'
-            t_box.Rotation = 45;
-            t_box.HorizontalAlignment = 'right'
-            t_box.FontWeight = 'Bold'
-        else
-        end
-        %ylab
-        if ii==1
-            ylab = ylabel(['PC' num2str(jj)])
-            ylab.FontSize = 12;
-            ylab.FontName = 'Arial'
-            ylab.Rotation = 0;
-            ylab.HorizontalAlignment = 'right'
-            ylab.FontWeight = 'Bold'
-            ylab.Position = ylab.Position - [0 .15 0]
-        end
-        if p_corr(jj,ii)<0.01
-            circ = nsidedpoly(1000, 'Center', [0 0], 'Radius', abs(rho(jj,ii)/max(rho)));
-            ccol = {'r','b'}
-            if rho(jj,ii)<0
-                circp=plot(circ,'EdgeColor',c_b,'FaceColor','none','Linewidth',2);%circp.EdgeAlpha = 0.2;
-            else
-                circp=plot(circ,'EdgeColor',c_y,'FaceColor','none','Linewidth',2);%circp.EdgeAlpha = 0.2;
-            end
-            %axis off
-            box  on
-            
-            %ylabel(num2str(jj))
-            %xlim([-1 1])
-            %ylim([-1 1])
-            set(gca,'xticklabel',{},'yticklabel',{},'xtick',[],'ytick',[])
-            %t_box = xlabel(pnames{ii})
-            %                    t_box.FontSize = 12;
-            %t_box.FontName = 'Arial'
-            %t_box.Rotation = 45;
-            % t_box.HorizontalAlignment = 'left'
-            if ii==1
-                ylab = ylabel(['PC' num2str(jj)])
-                ylab.FontSize = 12;
-                ylab.FontName = 'Arial'
-                ylab.Rotation = 0;
-                ylab.HorizontalAlignment = 'right'
-                ylab.FontWeight = 'Bold'
-                ylab.Position = ylab.Position - [0 .4 0]
-            end
-        end
-        
-    end
-    
-end
-rho
-p_corr
-
-set(gcf,'Position',[128 193 592 286])
 %% Correlation plots
 close all
 % AP, FFR, ITPC, 4 Hz neg
-fnames = {'AP_amp_pm','FFR_SNR','ITPC_ratio','Neg_4Hz','AEP_p2n1_int','ABR_NF_int'}
+fnames = {'AP_amp_pm','FFR_SNR','Neg_4Hz','AEP_p2n1_int'}
 f_idx = uheal_nh.gender ==1;
 m_idx = uheal_nh.gender ==2;
 clear rho p
-for ii=1:6
-for jj=1:6
+for ii=1:length(fnames)
+for jj=1:length(fnames)
     thisidx = ~isnan(uheal_nh.(fnames{ii})) & ~isnan(uheal_nh.(fnames{jj}));
     thisidx_m = ~isnan(uheal_nh.(fnames{ii})) & ~isnan(uheal_nh.(fnames{jj})) & uheal_nh.gender ==1;
     thisidx_f = ~isnan(uheal_nh.(fnames{ii})) & ~isnan(uheal_nh.(fnames{jj})) & uheal_nh.gender ==2;
@@ -312,7 +206,7 @@ for jj=1:6
     plot([xl],[yl],'color',[0.75 0.75 0.75])
     xlim([-3 3])
     ylim([-3 3])
-    if jj+(ii-1)*length(fnames) == 31
+    if jj+(ii-1)*length(fnames) == length(fnames)*length(fnames)-(length(fnames)-1)
         set(gca,'fontsize',12)
     else
         set(gca,'xticklabels',{},'yticklabels',{})
@@ -322,7 +216,8 @@ end
 
 %
 
-cidx = [2:6,9:12,16:18,23,24,30]
+
+cidx = [2:4,7,8,12]
 %cidx = [2:5,8:10,14:15,20]
 for tt=1:length(cidx)
 subplot(length(fnames),length(fnames),cidx(tt))
@@ -332,7 +227,7 @@ axis off
 %text(0,1,[num2str(round(rho(cidx(tt)),4)) '\newline' num2str(round(p_corr(cidx(tt)),4))])
 end
 %
-diag_idx = [1,8,15,22,29,36];
+diag_idx = find(eye(length(fnames),length(fnames)));%[1,8,15,22,29,36];
 for tt=1:length(diag_idx)
     subplot(length(fnames),length(fnames),diag_idx(tt))
     hold off
@@ -349,11 +244,11 @@ end
 %set(gcf,'position',[823 828 494 501])
 %
 pidx = setdiff(cidx,diag_idx)
-p_corr = p*((length(p)-6)/2);
+p_corr = p*((length(p)-length(fnames))/2);
 c_y = [239 210 84]/255;
 c_b = [158 204 239]/255;
 for pp=1:length(pidx)
-    subplot(6,6,pidx(pp))
+    subplot(length(fnames),length(fnames),pidx(pp))
     %text(1,1,num2str(p_corr(pidx(pp))))
     %hold on
     %text(1,2,num2str(rho(pidx(pp))))
@@ -376,27 +271,25 @@ for pp=1:length(pidx)
     end
 end
 %
-pnames = {'AP','FFR','ITPC','Neg. 4Hz','P2-N1','NF'}
+pnames = {'AP','FFR','Neg','P2N1'}
 %yidx = [1,6,11,16,21]
-yidx = [1,7,12,17,22,31]
+yidx = [1,5,9,13]%,17,22,31]
 for ii=1:length(fnames)
     subplot(length(fnames),length(fnames),ii)
     t = title(pnames{ii},'FontSize',14,'FontName','Arial')
-    subplot(length(fnames),length(fnames),yidx(ii))
-%     if ii==4
-%         ylab = ylabel('Neg. \newline 4Hz')
-%     else
-%         ylab = ylabel(pnames{ii})
-%     end
-%     ylab.FontSize =14;
-%     ylab.FontName = 'Arial';
-%     ylab.FontWeight = 'bold'
-%     ylab.Rotation = 0;
-%     ylab.HorizontalAlignment = 'Right'
-%     ylab.VerticalAlignment = 'middle'
-%     ylab.Position = ylab.Position-[0.6 0 0]
-%     ylab.Color = [0 0 0];
-    %tmp.YLabel.Position = tmp.YLabel.Position-[0 0 1];
+    % subplot(length(fnames),length(fnames),yidx(ii))
+    % 
+    %     ylab = ylabel(pnames{ii})
+    % 
+    % ylab.FontSize =14;
+    % ylab.FontName = 'Arial';
+    % ylab.FontWeight = 'bold'
+    % ylab.Rotation = 90;
+    % ylab.HorizontalAlignment = 'Right'
+    % ylab.VerticalAlignment = 'middle'
+    % ylab.Position = ylab.Position-[1 0 0]
+    % ylab.Color = [0 0 0];
+    % %tmp.YLabel.Position = tmp.YLabel.Position-[0.8 0 1];
     
 end
 
@@ -404,7 +297,7 @@ fig=gcf;
 set(fig,'renderer','painters')
 %cd(root
 set(gcf,'position',[133.3333 133.3333 621.6667 533.3333])
-saveas(fig,['figs/corr_eeg_NF'],'svg')
+saveas(fig,['figs/corr_eeg_simple'],'svg')
 %% correlation with questionaires
 uheal_nh.nesi_log = log10(uheal_nh.nesi); uheal_nh.nesi_log(isinf(uheal_nh.nesi_log))=nan;
 clinnames = {'nesi_log','tts','ssq12_mean','PTA_lf','PTA_hf','memr_slope'}

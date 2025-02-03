@@ -38,13 +38,13 @@ uheal_nh.FFR_SNR(sig_idx) = nan;
 %%
 % select variables
 zscor_xnan = @(x) bsxfun(@rdivide, bsxfun(@minus, x, mean(x,'omitnan')), std(x, 'omitnan'));
-Varnames = {'AP','FFR','ITPC','Neg. 4Hz','P2N1','NF'}
+Varnames = {'AP','FFR','ITPC','Neg. 4Hz','N1','P2'}
 X = {zscor_xnan(uheal_nh.AP_amp_pm);
     zscor_xnan(uheal_nh.FFR_SNR);
     zscor_xnan(uheal_nh.ITPC_ratio);
     zscor_xnan(uheal_nh.Neg_4Hz);
-    zscor_xnan(uheal_nh.AEP_p2n1_int);
-    zscor_xnan(uheal_nh.ABR_NF_int)};
+    zscor_xnan(uheal_nh.AEP_n1);
+    zscor_xnan(uheal_nh.AEP_p2)};
 X = reshape(cell2mat(X),105,length(Varnames));
 X_imp = knnimpute(X);
 [coeff,score,latent,tsquared,explained]=pca(X_imp);
@@ -171,7 +171,7 @@ set(gca,'fontsize',12)
 
 fig=gcf;
 %cd(root)
-saveas(fig,['figs/pca_eeg_clean_NF'],'svg')
+saveas(fig,['figs/pca_eeg_clean_N1P2'],'svg')
 
 
 %% PCA C1 vs. age
@@ -281,7 +281,7 @@ set(gcf,'Position',[128 193 592 286])
 %% Correlation plots
 close all
 % AP, FFR, ITPC, 4 Hz neg
-fnames = {'AP_amp_pm','FFR_SNR','ITPC_ratio','Neg_4Hz','AEP_p2n1_int','ABR_NF_int'}
+fnames = {'AP_amp_pm','FFR_SNR','ITPC_ratio','Neg_4Hz','AEP_n1','AEP_p2'}
 f_idx = uheal_nh.gender ==1;
 m_idx = uheal_nh.gender ==2;
 clear rho p
@@ -376,7 +376,7 @@ for pp=1:length(pidx)
     end
 end
 %
-pnames = {'AP','FFR','ITPC','Neg. 4Hz','P2-N1','NF'}
+pnames = {'AP','FFR','ITPC','Neg. 4Hz','N1','P2'}
 %yidx = [1,6,11,16,21]
 yidx = [1,7,12,17,22,31]
 for ii=1:length(fnames)
@@ -404,7 +404,7 @@ fig=gcf;
 set(fig,'renderer','painters')
 %cd(root
 set(gcf,'position',[133.3333 133.3333 621.6667 533.3333])
-saveas(fig,['figs/corr_eeg_NF'],'svg')
+saveas(fig,['figs/corr_eeg_N1P2'],'svg')
 %% correlation with questionaires
 uheal_nh.nesi_log = log10(uheal_nh.nesi); uheal_nh.nesi_log(isinf(uheal_nh.nesi_log))=nan;
 clinnames = {'nesi_log','tts','ssq12_mean','PTA_lf','PTA_hf','memr_slope'}

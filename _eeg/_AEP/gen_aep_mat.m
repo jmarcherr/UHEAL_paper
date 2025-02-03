@@ -16,10 +16,10 @@ com_sub = p2_sub-n1_sub; %obs
 
 % for stats
 for ii=1:length(com_sub)
-    pfit(ii,:) = polyfit([0:3],com_sub(ii,:)',1);
-    ffit(ii,:) = polyval(pfit(ii,:),[0:3]);
-    %pfit(ii,:) = polyfit([0.8:0.5:2.3],com_sub(ii,:)',1);
-    %ffit(ii,:) = polyval(pfit(ii,:),[0.8:0.5:2.3]);
+    %pfit(ii,:) = polyfit([0:3],com_sub(ii,:)',1);
+    %ffit(ii,:) = polyval(pfit(ii,:),[0:3]);
+    pfit(ii,:) = polyfit([0.8:0.5:2.3],com_sub(ii,:)',1);
+    ffit(ii,:) = polyval(pfit(ii,:),[0.8:0.5:2.3]);
 end
 
 

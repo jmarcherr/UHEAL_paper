@@ -1,11 +1,11 @@
-%% plot AEP_NF results
-% plot AEP_NF and extract peaks
+%% plot FFR_NF results
+% plot FFR_NF and extract peaks
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
 run('/work3/jonmarc/UHEAL_paper/UHEAL_startup.m')
 subs = dir('_outputs/*.mat')
 load('/work3/jonmarc/UHEAL_paper/_stats/uheal_data.mat');
-fig_save_path = '/work3/jonmarc/UHEAL_paper/_eeg//_NFest/_AEP/figs/';
+fig_save_path = '/work3/jonmarc/UHEAL_paper/_eeg//_NFest/_FFR/figs/';
 
 %% get data
 for s=1:length(subs)
@@ -16,7 +16,7 @@ for s=1:length(subs)
     sub_num(s) = str2num(subs(s).name(3:5));
     
     % get FFR
-    if isfield(data,'data_w')
+    if (isfield(data,'data_w') && data.nr_reject<25)
         fs = data.fs;
         TS_sub(s,:) = nanmean(data.data_w(:,:));
         TS_sub_chan(s,:,:) = data.data_w;
@@ -34,7 +34,7 @@ for s=1:length(subs)
         CP(s) =  uheal_data.CP_new(find(uheal_data.subid==sub_num(s)));%data.subinfo.CP;
         nr_reject(s) =data.nr_reject;
         
-    else
+    else 
 
         TS_sub(s,:,:) =nan(1,1536);
         TS_sub_chan(s,:,:) = nan(16,1536);
@@ -85,7 +85,7 @@ for ss = 1:length(idx_all)
         f = fs/2*linspace(0,1,length(ft_sub));
         % estimate noise floor
         foi = 2;
-        nbins = [5]%2:2:20];
+        nbins = f(find(f<2));%2:2:20];
         aband = f(find(f>7 &  f<12));
         fitF = f(find(f>0.7 & f<20));
         fitF = setdiff(fitF,[nbins aband]);

@@ -24,6 +24,10 @@ uheal_data = gen_aepNF_mat(uheal_data,aep_NF_dir)
 % run ABR NF extract
 abr_NF_dir = '/work3/jonmarc/UHEAL_paper/_eeg/_NFest/_ABR/_outputs/';
 uheal_data = gen_abrNF_mat(uheal_data,abr_NF_dir)
+% run FFR NF extract
+ffr_NF_dir = '/work3/jonmarc/UHEAL_paper/_eeg/_NFest/_FFR/_outputs/';
+uheal_data = gen_ffrNF_mat(uheal_data,ffr_NF_dir)
+
 % save uheal_data
 savedir = '/work3/jonmarc/UHEAL_paper/_stats'
 save([savedir filesep 'uheal_data.mat'],'uheal_data')

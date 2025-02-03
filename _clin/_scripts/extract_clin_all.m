@@ -3,15 +3,15 @@
 close all
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/zhome/7e/f/64621/Desktop/UHEAL_paper/UHEAL_startup.m')
-clindir = '/work3/jonmarc/UHEAL_master/UHEAL_paper/_clin/_clindata';
+run('/work3/jonmarc/UHEAL_paper/UHEAL_startup.m')
+clindir = '/work3/jonmarc/UHEAL_paper/_clin/_clindata';
 freq_aud = [250 500 1000 2000 4000 8000 9000 10000 11200 12500 14000 16000];
 d=dir(fullfile([clindir filesep 'UH*.mat']));
 
 % plot?
 %params
-plot_on=0;      % 1= plot
-save_figs = 0;  % 1= save figs
+plot_on=1;      % 1= plot
+save_figs = 1;  % 1= save figs
 %% get clin data
 
 for s=1:length(d)
@@ -259,7 +259,7 @@ uheal_data.acalos_HTL_A_sub = HTL_A_sub;
 uheal_data = rmfield(uheal_data,'DRCMR');
 uheal_data = rmfield(uheal_data,'CP');
 %% save uheal data
-savedir = '/work1/jonmarc/UHEAL_master/UHEAL_paper/_clin/clin_data_table/'
+savedir = '/work3/jonmarc/UHEAL_paper/_clin/clin_data_table/'
 
 save([savedir 'clin_data.mat'],'uheal_data')
 
@@ -272,15 +272,21 @@ save([savedir 'clin_data.mat'],'uheal_data')
 % plots audiograms vs. age as well as age-distribution in various ways. Can
 % be left out if only extraction of data is wanted (plot_on=0, save_figs=0)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%load('uheal_data_table_current/uheal_data.mat')
-cd('/work1/jonmarc/UHEAL_master/UHEAL_paper/_clin/_clindata')
-figdir = '/work1/jonmarc/UHEAL_master/UHEAL_paper/_clin/figs'
+run('/work3/jonmarc/UHEAL_paper/UHEAL_startup.m')
+load('/work3/jonmarc/UHEAL_paper/_clin/clin_data_table/clin_data.mat')
+cd('/work3/jonmarc/UHEAL_paper/_clin/_clindata')
+figdir = '/work3/jonmarc/UHEAL_paper/_clin/figs'
+
 ages = [18 77];
 % groups
 y_idx = find(uheal_data.Age<=25 & ~uheal_data.CP_new); 
 m_idx = find(uheal_data.Age>25 & uheal_data.Age<50 & ~uheal_data.CP_new)
 o_idx = find(uheal_data.Age>=50 & ~uheal_data.CP_new);
 
+age_sub = uheal_data.Age;
+aud = uheal_data.aud;
+freq_aud = uheal_data.audfreq;
+gender_sub = uheal_data.gender;
 save_figs = 1
 %%
 for plot_on=1
@@ -294,7 +300,7 @@ for plot_on=1
         % save figure
         title(['all, n=' num2str(length(idx))])
         if save_figs
-            saveas(fig,[figdir '/audiogram_all_' date],'epsc')
+            saveas(fig,[figdir '/audiogram_all_' date],'svg')
         end
         %% only NH
         close all
@@ -303,13 +309,13 @@ for plot_on=1
         % save figure
         %title(['NH, n=' num2str(length(NH_idx))])
         if save_figs
-            saveas(fig,[figdir '/audiograms_NH_' date],'epsc')
+            saveas(fig,[figdir '/audiograms_NH_' date],'svg')
         end
 
         hold on
-        py=plot(freq_aud,nanmean(aud(y_idx,:)),'o','color',y_col,'linewidth',2)%,'markerfacecolor',[cmap(13-5,:)])
-        pm=plot(freq_aud,nanmean(aud(m_idx,:)),'^','color',m_col,'linewidth',2)%,'markerfacecolor',[cmap(30,:) 0.5])
-        po=plot(freq_aud,nanmean(aud(o_idx,:)),'sq','color',o_col,'linewidth',2)%,'markerfacecolor',[cmap(end-7,:) 0.5])
+        py=plot(freq_aud(1,:),nanmean(aud(y_idx,:)),'o','color',y_col,'linewidth',2)%,'markerfacecolor',[cmap(13-5,:)])
+        pm=plot(freq_aud(1,:),nanmean(aud(m_idx,:)),'^','color',m_col,'linewidth',2)%,'markerfacecolor',[cmap(30,:) 0.5])
+        po=plot(freq_aud(1,:),nanmean(aud(o_idx,:)),'sq','color',o_col,'linewidth',2)%,'markerfacecolor',[cmap(end-7,:) 0.5])
         hleg=legend([py,pm,po],{'Young','Middle-aged','Older'});
         hleg.Box='off';
         hleg.Position = [0.2323 0.3188 0.3935 0.2475];
@@ -317,7 +323,7 @@ for plot_on=1
         set(gca,'xtick',[250,500,1000,2000,4000,8000,16000],'xticklabel',{'.25','.5','1','2','4','8','16'})
         
         if save_figs
-            saveas(fig,[figdir '/audiograms_NH_groups' date],'epsc')
+            saveas(fig,[figdir '/audiograms_NH_groups' date],'svg')
         end
         
         %% only HI
@@ -328,7 +334,7 @@ for plot_on=1
         % save figure
         title(['HI, n=' num2str(length(HI_idx))])
         if save_figs
-            saveas(fig,[figdir '/audiograms_HI' date],'epsc')
+            saveas(fig,[figdir '/audiograms_HI' date],'svg')
         end
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -354,7 +360,7 @@ for plot_on=1
         box off
         fig= gcf
         if save_figs
-            saveas(fig,[figdir '/age_hist_all_' date],'epsc')
+            saveas(fig,[figdir '/age_hist_all_' date],'svg')
         end
 
         %% age plots sex divded (only NH)
@@ -388,14 +394,14 @@ for plot_on=1
         box off
         fig= gcf
         if save_figs
-            saveas(fig,[figdir '/age_hist_male_female_' date],'epsc')
+            saveas(fig,[figdir '/age_hist_male_female_' date],'svg')
         end
 
         %% grouped male female
         figure(3)
-        Y   = gender_sub(find(age_sub<=25 & ~uheal_data.CP_new'));
-        O1  = gender_sub(find(age_sub>25 & age_sub<=50 & ~uheal_data.CP_new'));
-        O2  = gender_sub(find(age_sub>50 & ~uheal_data.CP_new'));
+        Y   = gender_sub(find(age_sub<=25 & ~uheal_data.CP_new));
+        O1  = gender_sub(find(age_sub>25 & age_sub<=50 & ~uheal_data.CP_new));
+        O2  = gender_sub(find(age_sub>50 & ~uheal_data.CP_new));
 
         b1=bar([1:3],[length(find(Y==1)) length(find(O1==1)) length(find(O2==1));...
             length(find(Y==2)) length(find(O1==2)) length(find(O2==2))]','stacked')
@@ -413,7 +419,7 @@ for plot_on=1
         set(gcf,'position',[305 412 432 299])
         fig= gcf
         if save_figs
-            saveas(fig,[figdir '/age_hist_gender' date],'epsc')
+            saveas(fig,[figdir '/age_hist_gender' date],'svg')
         end
 
     end
@@ -498,7 +504,7 @@ for plot_on=0
         xtickangle(0)
         fig= gcf
         if save_figs
-            %saveas(fig,['figs/figs_NH/memr_summary' date],'epsc')
+            %saveas(fig,['figs/figs_NH/memr_summary' date],'svg')
         end
 
         %% MEMR slope
@@ -536,7 +542,7 @@ for plot_on=0
 
         fig= gcf
         if save_figs
-            saveas(fig,'figs/figs_NH/memr_age','epsc')
+            saveas(fig,'figs/figs_NH/memr_age','svg')
         end
     end
 end
@@ -622,7 +628,7 @@ for plot_on=0
         box off
         fig= gcf
         if save_figs
-            saveas(fig,['figs/figs_NH/teoae_overview_amp' date],'epsc')
+            saveas(fig,['figs/figs_NH/teoae_overview_amp' date],'svg')
         end
 
 
@@ -677,7 +683,7 @@ for plot_on=0
 
         fig= gcf
         if save_figs
-            saveas(fig,'figs/figs_NH/teoae_overview_SNR','epsc')
+            saveas(fig,'figs/figs_NH/teoae_overview_SNR','svg')
         end
         %% mean wave form
         close all
@@ -695,7 +701,7 @@ for plot_on=0
         %plot(squeeze(teoae_sub_resp(1,:,1)),teoae_sub_resp(:,:,2))
         fig= gcf
         if save_figs
-            saveas(fig,['figs/teoae_waveform' date],'epsc')
+            saveas(fig,['figs/teoae_waveform' date],'svg')
         end
     end
 end
@@ -721,7 +727,7 @@ for plot_on=0
 
         fig= gcf
         if save_figs
-            saveas(fig,['figs/rds_age' date],'epsc')
+            saveas(fig,['figs/rds_age' date],'svg')
         end
 
         figure('Renderer','painter')
@@ -736,7 +742,7 @@ for plot_on=0
 
         fig= gcf
         if save_figs
-            saveas(fig,['figs/NESI_age' date],'epsc')
+            saveas(fig,['figs/NESI_age' date],'svg')
         end
 
         figure('Renderer','painter')
@@ -753,7 +759,7 @@ for plot_on=0
         end
         fig= gcf
         if save_figs
-            saveas(fig,['figs/ssq_age' date],'epsc')
+            saveas(fig,['figs/ssq_age' date],'svg')
         end
 
         % tts
@@ -769,7 +775,7 @@ for plot_on=0
 
         fig= gcf
         if save_figs
-            saveas(fig,'figs/tts_age','epsc')
+            saveas(fig,'figs/tts_age','svg')
         end
     end
 end
@@ -800,7 +806,7 @@ for plot_on =1
         set(gcf,'position',[150 781 232 219])
         fig= gcf
         if save_figs
-            saveas(fig,['figs/ACALOS_all_2' date],'epsc')
+            saveas(fig,['figs/ACALOS_all_2' date],'svg')
         end
         %%
         figure('Renderer','painter')
@@ -820,7 +826,7 @@ for plot_on =1
         hleg.Box = 'off'
         fig= gcf
         if save_figs
-            saveas(fig,['figs/ACALOS_yvo' date],'epsc')
+            saveas(fig,['figs/ACALOS_yvo' date],'svg')
         end
 
         figure('Renderer','painter')
@@ -841,7 +847,7 @@ for plot_on =1
         end
         fig= gcf
         if save_figs
-            saveas(fig,['figs/ACALOS_slope' date],'epsc')
+            saveas(fig,['figs/ACALOS_slope' date],'svg')
         end
     end
 end
@@ -856,8 +862,8 @@ function fig = plot_audiogram_groups(idx,age_sub,aud,aud_freq,cmap)
     figure('renderer','painter')
 for s=1:length(idx)
 
-            p1 = semilogx(aud_freq,aud(idx(s),:)','-','color',[cmap(age_sub(idx(s))-17,:) 0.8]);
-            plot_aud_param(p1,aud_freq);
+            p1 = semilogx(aud_freq(idx(s),:),aud(idx(s),:)','-','color',[cmap(age_sub(idx(s))-17,:) 0.8]);
+            plot_aud_param(p1,aud_freq(idx(s),:));
             hold on
             
             cb=colorbar;
