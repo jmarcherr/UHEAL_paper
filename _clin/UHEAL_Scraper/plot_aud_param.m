@@ -1,5 +1,5 @@
 function plot_aud_param(plotid,aud_freq)
-fsize = 16;
+fsize = 12;
 pw = [680   523   325   282];
 set(gcf,'position',pw)
 set(gca,'Ydir','reverse','xtick',aud_freq([1:6 end]),'xticklabel',aud_freq([1:6 end])/1000);
@@ -18,8 +18,8 @@ xlim([200 20000])
 xtickangle(45)
 set(gca,'Fontsize',fsize);
 box off
-xrule.FontSize = 14;
-xl.FontSize = 16;
+xrule.FontSize = 12;
+xl.FontSize = 10;
 hold on
 plot([8e3 8e3],[120 -30],'k--')
 

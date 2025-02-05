@@ -3,7 +3,7 @@ rootdir = fileparts(which('UHEAL_startup.m'));
 %datadir = ([rootdir, filesep 'UHEAL_data']); % relative datafolder
 datadir = '/work3/jonmarc/UHEAL_master/UHEAL/UHEAL_data/'; % hardcoded datafolder
 
-
+set(0,'DefaultAxesFontName','SansSerif')
 try %#ok
     rng(1); 
 end  
