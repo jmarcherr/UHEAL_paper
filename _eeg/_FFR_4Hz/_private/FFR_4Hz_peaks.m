@@ -2,9 +2,9 @@
 % plot FFR_4Hz and extract peaks
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/zhome/7e/f/64621/Desktop/UHEAL_paper/UHEAL_startup.m')
-subs = dir('/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/_derivatives/*.mat')
-load('/work3/jonmarc/UHEAL_master/UHEAL_paper/_stats/uheal_data.mat');
+run('/work3/jonmarc/UHEAL_paper/UHEAL_startup.m')
+subs = dir('/work3/jonmarc/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/_derivatives/*.mat')
+load('/work3/jonmarc/UHEAL_paper/_stats/uheal_data.mat');
 %% get data
 for s=1:length(subs)
     
@@ -130,6 +130,14 @@ figure('renderer','painters')
   end
   
 
+  %% corr with age P2 first tone
+
+this_idx = ~isnan(age') & ~isnan(P2(:,1));
+this_idx = find(this_idx & ~CP);
+[rhop2,pp2] =corr(zscore(age(this_idx))',zscore(P2(this_idx,1)),'type','spearman');
+%%
+idx_all = {YNH_idx,MNH_idx,ONH_idx};
+gcol = {y_col,m_col,o_col};
   for pp=1:3
       subplot(3,1,pp)
   plot(time_TS,TS_base(idx_all{pp},:),'color',[0.5 0.5 0.5 0.5])
@@ -281,7 +289,7 @@ hleg.Position = [0.5728 0.6010 0.2869 0.1950];
 set(gcf,'position',[440 471 289 233])
 
 fig = gcf;
-saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P2-N1','epsc')
+%saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P2-N1','epsc')
 
 %% P50
 close all
@@ -306,7 +314,7 @@ hleg.Position = [0.5432 0.1985 0.3599 0.2017];
 set(gcf,'position',[440 471 289 233])
 
 fig = gcf;
-saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50','epsc')
+%saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50','epsc')
 %% corr with age
 close all
 figure('renderer','painters')
@@ -342,7 +350,7 @@ for tt=1:6 % 6 tones
 end
 set(gcf,'position',[303 163 829 540])
 fig = gcf;
-saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50_rel_peaks_scatter','epsc')
+%saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50_rel_peaks_scatter','epsc')
 
 %% tone 2- tone 1 response
 close all
@@ -362,6 +370,6 @@ for pp =1:3
 end
 set(gcf,'position',[440 552 494 151])
 fig = gcf;
-saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50_rel_peaks_t2-t1','epsc')
+%saveas(fig,'/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/P50_rel_peaks_t2-t1','epsc')
 
 

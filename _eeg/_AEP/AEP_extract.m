@@ -209,6 +209,42 @@ ylim([-0.5 3])
 fig=gcf
 box off
 saveas(fig,'/work3/jonmarc/UHEAL_paper/_eeg/_AEP/_outputs/figs/p50_age_group','svg')
+
+%% post hoc analysis
+clc
+disp('ISI=2.3 latencies')
+disp(['mean P50 latency: ' num2str(round(nanmean(p1_sub_lat(idx,4)),3)) '+/- ' num2str(round(nanstd(p1_sub_lat(idx,4)),3)) ' s'])
+disp(['mean N100 latency: ' num2str(round(nanmean(n1_sub_lat(idx,4)),3)) '+/- ' num2str(round(nanstd(n1_sub_lat(idx,4)),3)) ' s'])
+disp(['mean P200 latency: ' num2str(round(nanmean(p2_sub_lat(idx,4)),3)) '+/- ' num2str(round(nanstd(p2_sub_lat(idx,4)),3)) ' s'])
+
+% post hoc corr N1 @2.3s
+this_idx = ~isnan(age') & ~isnan(n1_sub(:,4));
+this_idx = find(this_idx & idx);
+[rhon1,pn1] =corr(zscore(age(this_idx))',zscore(n1_sub(this_idx,4)),'type','spearman');
+
+% post hoc corr P2 @0.8s
+this_idx = ~isnan(age') & ~isnan(p2_sub(:,1));
+this_idx = find(this_idx & idx);
+[rhop2,pp2] =corr(zscore(age(this_idx))',zscore(p2_sub(this_idx,1)),'type','spearman');
+
+% post hoc corr P50 mean
+this_idx = ~isnan(age') & ~isnan(mean(p2_sub(:,:),2));
+this_idx = find(this_idx & idx);
+[rhop1m,pp1m] =corr(zscore(age(this_idx))',zscore(mean(p1_sub(this_idx,:),2)),'type','spearman');
+
+% post hoc corr P50 mean over ISI
+rates = {'0.8','1.3','1.8','2.3'}
+for ii=1:4
+this_idx = ~isnan(age') & ~isnan(p1_sub(:,ii));
+this_idx = find(this_idx & idx);
+[rhop1(ii),pp1(ii)] =corr(zscore(age(this_idx))',zscore(p1_sub(this_idx,ii)),'type','spearman');
+end
+disp(['Age corr uncorrected N1@2.3 s : r = ' num2str(round(rhon1,3)) ' , p = ' num2str(round(pn1,4))])
+disp(['Age corr uncorrected P2@0.8 s : r = ' num2str(round(rhop2,3)) ' , p = ' num2str(round(pp2,4))])
+for ii=1:4
+disp(['Age corr uncorrected P50 ' rates{ii} ' s : r = ' num2str(round(rhop1(ii),3)) ' , p = ' num2str(round(pp1(ii),4))])
+end
+disp(['Age corr uncorrected P50 mean : r = ' num2str(round(rhop1m,3)) ' , p = ' num2str(round(pp1m,4))])
 %% plot stim
 close all
 figure('renderer','painters')

@@ -141,7 +141,7 @@ N1_idx =[0.065  0.15];
 P2_idx =[0.15 0.25];
 N2_idx = [0.2 0.3];
 p_idx = {P1_idx,N1_idx,P2_idx,N2_idx};
-dd=2;
+dd=1;
 % loop over subjects
 for ss=1:size(data_all{dd},1)
     % find average peak latency for each subject
@@ -316,10 +316,10 @@ hleg=legend({'Young','Mid. aged','Older'});
 hleg.Box = 'off'
 hleg.Position = [0.5728 0.6010 0.2869 0.1950];
 set(gcf,'position',[440 471 289 233])
-title(titles{ss})
+title(['P200-N100 ' titles{ss} ' latency'])
 
 fig = gcf;
-%saveas(fig,['/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/peak_dev/p2-n1_' titles{ss} '_' dds_string{dd}],'epsc')
+saveas(fig,['/work3/jonmarc/UHEAL_paper/_eeg/_FFR_4Hz/_private/figs/p2-n1_' titles{ss} '_' dds_string{dd}],'svg')
 
 end
 %% stats full model
@@ -358,6 +358,7 @@ a.age = age_tab';
 a.tonenr = categorical(tone_tab)';
 tab = sortrows(struct2table(a),'subnum');
 lme = fitlme(tab,'n1p2~age*tonenr+(1|subnum)')
+%%
 %n1p2=strat{ss}(:,:,3)-strat{ss}(:,:,2);
 %p50 = P1;
 idx_all = {YNH_idx,MNH_idx,ONH_idx};
@@ -381,9 +382,9 @@ hleg.Box = 'off'
 hleg.Position = [0.5728 0.6010 0.2869 0.1950];
 set(gcf,'position',[440 471 289 233])
 set(gca,'xtick',[1:2],'xticklabel',{'1st','2:6'})
-title(titles{ss})
+title(['P200-N100 ' titles{ss} ' latency'])
 fig = gcf;
-saveas(fig,['/zhome/7e/f/64621/Desktop/UHEAL_paper/_eeg/_FFR_4Hz/_outputs/figs/firstvsrest' titles{ss} '_' dds_string{dd}],'epsc')
+saveas(fig,['/work3/jonmarc/UHEAL_paper/_eeg/_FFR_4Hz/_private/figs/firstvsrest' titles{ss} '_' dds_string{dd}],'svg')
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
