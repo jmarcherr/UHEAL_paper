@@ -1,12 +1,12 @@
 % run EFR preproc
 clear all
-cd('/work1/jonmarc/UHEAL_master/UHEAL_paper')
+cd('/work3/jonmarc/UHEAL_master/UHEAL_paper')
 UHEAL_startup
 cd(rootdir)
 ft_defaults
 addpath(datadir)
 % save dir
-savedir = '/work1/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_EFR/_outputs/_derivatives';
+savedir = '/work3/jonmarc/UHEAL_paper/_eeg/_EFR/_outputs/_derivatives';
 
 % get avalible subjects
 d = dir([datadir filesep 'UH*']);

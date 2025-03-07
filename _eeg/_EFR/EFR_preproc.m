@@ -10,7 +10,7 @@ function data = EFR_preproc(dataset_root,subid)
 %        Preprocessed EFR data
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if nargin < 1 || isempty(dataset_root); dataset_root = '/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/'; end
+if nargin < 1 || isempty(dataset_root); dataset_root = '/work3/jonmarc/UHEAL_master/UHEAL/UHEAL_data/'; end
 if nargin < 2 || isempty(subid); error('Please provide subject identifier'); end
 
 try
@@ -74,6 +74,33 @@ try
 
     % re-referenced and filtered data struct
     data = ft_preprocessing(cfg,data_res);
+
+    % repair bad channels
+    if strcmp(subid,'UH020')
+        noisy_chan = 'FC4';
+    elseif strcmp(subid,'UH073')
+        noisy_chan = 'FC3';
+    else
+        noisy_chan = [];
+    end
+
+    if noisy_chan
+        %frepair noisy channels
+        cfg = [];
+        cfg.method        = 'distance';
+        cfg.neighbourdist = 1;
+        cfg.layout = 'biosemi64.lay';
+        cfg.channel  = data.label;
+        neighbours = ft_prepare_neighbours(cfg);
+        missing = noisy_chan;
+        cfg.method         = 'average';
+        cfg.layout = 'biosemi64.lay';
+        cfg.neighbours = neighbours;
+        cfg.badchannel = missing;
+        cfg.feedback      = 'yes'
+        data_rep = ft_channelrepair(cfg,data)
+        data = rmfield(data_rep,'elec');
+    end
 
     % subinfo
     data.subid = subid;

@@ -2,10 +2,9 @@
 clear all;close all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
 
-run('/work1/jonmarc/UHEAL_master/UHEAL_paper/UHEAL_startup.m')
-subs = dir('_outputs/_derivatives/*.mat')
-%load('/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data.mat');
-load('/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data_current_EEG/uheal_data.mat');
+run('/work3/jonmarc/UHEAL_paper/UHEAL_startup.m')
+subs = dir('/work3/jonmarc/UHEAL_paper/_eeg/_EFR/_outputs/_derivatives/*.mat')
+load('/work3/jonmarc/UHEAL_master/UHEAL/uheal_data.mat');
 
 %% get data
 for s=1:length(subs)
@@ -95,7 +94,7 @@ std(nr_reject)
 %for ii
 
 YNH_idx = find(age<=25 & ~CP & sig_idx_avg); 
-MANH_idx = find(age>28 & age<50 & ~CP & sig_idx_avg);
+MANH_idx = find(age>25 & age<50 & ~CP & sig_idx_avg);
 ONH_idx = find(age>=50 & ~CP & sig_idx_avg);
 NH_idx = find(~CP & sig_idx_avg);
 

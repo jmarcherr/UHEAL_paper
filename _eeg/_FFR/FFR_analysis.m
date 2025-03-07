@@ -38,6 +38,7 @@ try
     data_cond = ft_selectdata(cfg,data);
     time = data.time{1};
 
+
     % define time idx
     tidx = find(time>=0 & time<0.5); % pure tone (250 ms) + noise (250 ms)
     tidx_FFR = find(time>=-0.1 & time<0.5);
@@ -50,18 +51,19 @@ try
     %epoched_data_p = [epoched_data-epoched_inv]/2;       %phase independent
     epoched_data = [epoched_data+epoched_inv]/2;         %phase dependent
 
-    % artifact rejection and weighting
+    % threshold reject
     [valid_trials,rjt] = threshold_rejection(epoched_data,50,tidx,trials_oi);
 
     % clean epoched data
     data_cc = [];
+    
     % reject if less than half the trials remain
-    %if length(valid_trials)<[486/4]
-    %    error(['Less than half of trials are clean. Rejecting ' data.subid]);
-    %else
+    if length(valid_trials)<[486/2]
+       error(['Less than half of trials are clean. Rejecting ' data.subid]);
+    else
         data_cc = epoched_data(valid_trials,:,:); % clean data
         data_cc = permute(data_cc,[2,3,1]);
-    %end
+    end
     data.valid_trials = valid_trials;
 
     clc

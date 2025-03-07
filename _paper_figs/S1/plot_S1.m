@@ -47,10 +47,20 @@ CP_X = (mean(uheal_data.aud(:,1:6),2)<=20 & all(uheal_data.aud(:,1:6)<=15,2) & a
 uheal_data.CP_X =CP_X;
 % new groups
 y_idx = find(uheal_data.Age<=25 & uheal_data.CP_X); 
-m_idx = find(uheal_data.Age>26 & uheal_data.Age<50 & uheal_data.CP_X)
+m_idx = find(uheal_data.Age>25 & uheal_data.Age<50 & uheal_data.CP_X)
 o_idx = find(uheal_data.Age>=50 & uheal_data.CP_X);
 
 uheal_data.CP_new = ~CP_X;
+clc
+y = find(uheal_data.Age<=25 & ~uheal_data.CP_new);
+disp(['YOUNG, n=' num2str(length(y)) ': mean age:' num2str(round(mean(uheal_data.Age(y)),1)) ' +/- ' num2str(round(std(uheal_data.Age(y)),1)) ...
+    ', ' num2str(length(find(uheal_data.gender(y)==2))) ' Males'])
+m = find(uheal_data.Age>25 & uheal_data.Age<50 & ~uheal_data.CP_new);
+disp(['M AGED, n=' num2str(length(m)) ': mean age:' num2str(round(mean(uheal_data.Age(m)),1)) ' +/- ' num2str(round(std(uheal_data.Age(m)),1))...
+    ', ' num2str(length(find(uheal_data.gender(m)==2))) ' Males'])
+o = find(uheal_data.Age>=50 & ~uheal_data.CP_new);
+disp(['OLDER, n=' num2str(length(o)) ': mean age:' num2str(round(mean(uheal_data.Age(o)),1)) ' +/- ' num2str(round(std(uheal_data.Age(o)),1))...
+    ', ' num2str(length(find(uheal_data.gender(o)==2))) ' Males'])
 %% Audiogram plotting
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % plots audiograms vs. age as well as age-distribution in various ways. Can
@@ -119,6 +129,59 @@ if save_figs
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% CORTICAL
+load('/work3/jonmarc/UHEAL_paper/_stats/uheal_data.mat')
+% old groups
+%y_idx = find(uheal_data.Age<=25 & ~uheal_data.CP_new); 
+%m_idx = find(uheal_data.Age>26 & uheal_data.Age<50 & ~uheal_data.CP_new)
+%o_idx = find(uheal_data.Age>=50 & ~uheal_data.CP_new);
+% new CP subgroups
+CP_X = (mean(uheal_data.aud(:,1:6),2)<=20 & all(uheal_data.aud(:,1:6)<=15,2) & all(uheal_data.aud(:,1:6)>=-5,2));
+uheal_data.CP_X =CP_X;
+% new groups
+y_idx = find(uheal_data.Age<=25 & uheal_data.CP_X); 
+m_idx = find(uheal_data.Age>25 & uheal_data.Age<50 & uheal_data.CP_X)
+o_idx = find(uheal_data.Age>=50 & uheal_data.CP_X);
+
+uheal_data.CP_new = ~CP_X;
+
+% 4Hz neg
+var = 'Neg_4Hz';
+labels = '\muV'
+lims = [-3 2];
+figure
+[h,ax1,ax2]=stat_plots_uh_age_pt(uheal_data,var,labels,lims)
+%hleg.Position = [0.5320 0.7793 0.2155 0.1272]
+%set(hleg,'Visible','off')
+%set(gcf,'position',[462 556 297 197])
+%set(ax1,'FontSize',11);set(ax2,'FontSize',11)
+%set(gcf,'position',[229 226 396 318])
+fig = gcf;
+saveas(fig,[savepath 'Neg_age'],'svg')
+
+%4Hz itpc_ratio
+var = 'ITPC_ratio';
+labels = 'ITPC ratio'
+lims = [-1 1];
+figure
+[h,ax1,ax2]=stat_plots_uh_age_pt(uheal_data,var,labels,lims)
+%hleg.Position = [0.5320 0.7793 0.2155 0.1272]
+%set(hleg,'Visible','off')
+%set(gcf,'position',[462 556 297 197])
+%set(ax1,'FontSize',11);set(ax2,'FontSize',11)
+%set(gcf,'position',[229 226 396 318])
+fig = gcf;
+saveas(fig,[savepath 'itpc_age'],'svg')
+
+% AEP int
+var = 'AEP_p2n1_int';
+labels = 'P2-N1 intercept'
+lims = [-8 8];
+figure
+[h,ax1,ax2]=stat_plots_uh_age_pt(uheal_data,var,labels,lims)
+%set(gcf,'position',[971 23 396 297])
+fig = gcf;
+saveas(fig,[savepath 'P2N1_int'],'svg')
 %% TEOAE
 figure('Renderer','painters')
         marks_ag = {'^','sq','o'}

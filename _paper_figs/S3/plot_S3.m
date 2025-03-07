@@ -46,7 +46,7 @@ for s=1:length(subs)
         age(s) = data.subinfo.age;
         gender(s) = data.subinfo.gender;
         CP(s) = uheal_data.CP_new(find(uheal_data.subid==sub_num(s)));
-        dat_clean(s,:,:) = nan(size(dat_clean(1,:,:)));
+        %dat_clean(s,:,:) = nan(size(dat_clean(1,:,:)));
         z_sub{s} = nan;
     end
 
@@ -295,6 +295,7 @@ end
 for ss=1:size(data_all,1)
     % find average peak latency for each subject
     % find mean waveform over 6 tones
+    this_mean = [];
     for tt=1:6
         this_idx = [-0.1+0.5*(tt-1) 0.5+0.5*(tt-1)];
         this_mean(tt,:) = data_all(ss,find(time_TS>=this_idx(1) & time_TS<=this_idx(2)));
@@ -367,6 +368,7 @@ lme = fitlme(tab,'n1p2~age*tonenr+(1|subnum)')
 %% first tone vs. rest
 
 n1p2_mean = [n1p2(:,1) mean(n1p2(:,2:end),2)];
+idx = nh_idx;
 % reshape
 r_dim = size(n1p2_mean(idx,:),1)*size(n1p2_mean(idx,:),2); % dimension
 n1p2_tab = reshape(n1p2_mean(idx,:)',r_dim,1)';
@@ -384,9 +386,10 @@ lme = fitlme(tab,'n1p2~age*tonenr+(1|subnum)')
 
 
 %% first tone vs. rest for all peaks
+clear lme
 for tt=1:size(peak_all,2)
 this_mean = [peak_all{tt}(:,1) mean(peak_all{tt}(:,2:end),2)];
-idx = ~isnan(this_mean(:,1));
+idx = nh_idx;%~isnan(this_mean(:,1));
 % reshape
 r_dim = size(this_mean(idx,:),1)*size(this_mean(idx,:),2); % dimension
 this_tab = reshape(this_mean(idx,:)',r_dim,1)';
@@ -409,3 +412,107 @@ clc
 for tt=1:5
     disp(['interaction for ' tt_titles{tt} ' : t = ' num2str(lme{tt}.Coefficients.tStat(4)) ', p =' num2str(lme{tt}.Coefficients.pValue(4))])
 end
+
+%% full model 
+clear lme
+this_mean = [];
+for tt=1:size(peak_all,2)
+this_mean = peak_all{tt};
+idx = nh_idx;%setdif(~isnan(this_mean(:,1)),nh_idx);
+
+% reshape
+r_dim = size(this_mean(idx,:),1)*size(this_mean(idx,:),2); % dimension
+peak_tab = reshape(this_mean(idx,:)',r_dim,1)';
+subnum_tab = reshape(repmat(sub_num(idx),size(this_mean(idx,:),2),1),1,r_dim);
+age_tab = reshape(repmat(age(idx),size(this_mean(idx,:),2),1),1,r_dim);
+tone_tab = reshape(repmat(1:6,size(this_mean(idx,:),1),1)',1,r_dim);
+
+a = struct;
+a.peak = peak_tab';
+a.subnum = categorical(subnum_tab)';
+a.age = age_tab';
+a.tonenr = categorical(tone_tab)';
+tab = sortrows(struct2table(a),'subnum');
+lme{tt} = fitlme(tab,'peak~age*tonenr+(1|subnum)')
+
+end
+
+%% full model with peak ampitudes as factor
+this_mean = [];
+m_peaks = peak_all;
+for tt=1:size(peak_all,2)-1
+this_mean = [this_mean ;m_peaks{tt}'];
+
+end
+this_mean = this_mean';
+idx = nh_idx;%~isnan(this_mean(:,1));
+% reshape
+r_dim = size(this_mean(idx,:),1)*size(this_mean(idx,:),2); % dimension
+peak_tab = reshape(this_mean(idx,:)',r_dim,1)';
+subnum_tab = reshape(repmat(sub_num(idx),size(this_mean(idx,:),2),1),1,r_dim);
+age_tab = reshape(repmat(age(idx),size(this_mean(idx,:),2),1),1,r_dim);
+tone_tab = reshape(repmat(repmat([1:6],1,4),size(this_mean(idx,:),1),1)',1,r_dim);
+peak_name = reshape(repmat(reshape(repmat({'1_P1','2_N1','3_P2','4_N2'},6,1),1,6*4)',size(this_mean(idx,:),1),1),1,r_dim);
+
+a = struct;
+a.peak = peak_tab';
+a.subnum = categorical(subnum_tab)';
+a.age = age_tab';
+a.tonenr = categorical(tone_tab)';
+a.peak_name = categorical(peak_name)';
+tab = sortrows(struct2table(a),'subnum');
+lme = fitlme(tab,'peak~peak_name*age+(1|subnum)')
+
+
+%% full model first vs. rest
+this_mean = [];
+m_peaks = peak_all;
+for tt=1:size(peak_all,2)-1
+this_mean = [this_mean ;m_peaks{tt}(:,1)';nanmean(m_peaks{tt}(:,2:6),2)'];
+
+end
+this_mean = this_mean';
+idx = nh_idx;%~isnan(this_mean(:,1));
+% reshape
+r_dim = size(this_mean(idx,:),1)*size(this_mean(idx,:),2); % dimension
+peak_tab = reshape(this_mean(idx,:)',r_dim,1)';
+subnum_tab = reshape(repmat(sub_num(idx),size(this_mean(idx,:),2),1),1,r_dim);
+age_tab = reshape(repmat(age(idx),size(this_mean(idx,:),2),1),1,r_dim);
+tone_tab = reshape(repmat(repmat([1:2],1,4),size(this_mean(idx,:),1),1)',1,r_dim);
+peak_name = reshape(repmat(reshape(repmat({'1_P1','2_N1','3_P2','4_N2'},2,1),1,2*4)',size(this_mean(idx,:),1),1),1,r_dim);
+
+a = struct;
+a.peak = peak_tab';
+a.subnum = categorical(subnum_tab)';
+a.age = age_tab';
+a.tonenr = categorical(tone_tab)';
+a.peak_name = categorical(peak_name)';
+tab = sortrows(struct2table(a),'subnum');
+lme = fitlme(tab,'peak~peak_name*age*tonenr+(1|subnum)')
+
+
+%% full model first - rest :2 step model
+this_mean = [];
+m_peaks = peak_all;
+for tt=1:size(peak_all,2)-1
+this_mean = [this_mean ;m_peaks{tt}(:,1)'-nanmean(m_peaks{tt}(:,2:6),2)'];
+
+end
+this_mean = this_mean';
+idx = nh_idx;%~isnan(this_mean(:,1));
+% reshape
+r_dim = size(this_mean(idx,:),1)*size(this_mean(idx,:),2); % dimension
+peak_tab = reshape(this_mean(idx,:)',r_dim,1)';
+subnum_tab = reshape(repmat(sub_num(idx),size(this_mean(idx,:),2),1),1,r_dim);
+age_tab = reshape(repmat(age(idx),size(this_mean(idx,:),2),1),1,r_dim);
+tone_tab = reshape(repmat(repmat([1],1,4),size(this_mean(idx,:),1),1)',1,r_dim);
+peak_name = reshape(repmat(reshape({'1_P1','2_N1','3_P2','4_N2'},1,1*4)',size(this_mean(idx,:),1),1),1,r_dim);
+
+a = struct;
+a.peak = peak_tab';
+a.subnum = categorical(subnum_tab)';
+a.age = age_tab';
+a.tonenr = categorical(tone_tab)';
+a.peak_name = categorical(peak_name)';
+tab = sortrows(struct2table(a),'subnum');
+lme = fitlme(tab,'peak~peak_name*age+(1|subnum)')

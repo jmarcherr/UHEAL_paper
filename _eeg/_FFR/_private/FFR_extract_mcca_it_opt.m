@@ -41,6 +41,13 @@ for it = 16:-1:2
     norm_F = F_comp(c_idx)./max(F_comp(c_idx));
     % find components in top 50%
     c_idx = find(norm_F>=0.5);
+    % if it==16
+    %     plot(F_comp(1:10))
+    %     hold on
+    %     plot([1 10],[F_crit_comp F_crit_comp],'--k')
+    %     xlable('SC')
+    %     ylabel('F-stat')
+    % end
 
     %% SNR calculation
     % init variables
@@ -154,7 +161,7 @@ for ii=16:-1:2
     hold on
     plot([1 length(idx_all)],[0 0],'--k')
     xlim([-5 115])
-end
+%end
 box off
 xlabel('subject')
 ylabel('\Delta SNR (dB)')
@@ -165,7 +172,7 @@ set(gcf,'position',[176 244 521 453])
 
 % average snr improvement and variance across subjects
 subplot 224
-for ii=16:-1:2
+%for ii=16:-1:2
     this_y = SNR_mcca_it{ii}(idx_all)-SNR_avg_it{ii}(idx_all)';
     ps(it) = errorbar(ii,mean(this_y),std(this_y),'o','color',cmap_mcca(13,:),'markerfacecolor',cmap_mcca(13,:))
 
@@ -173,14 +180,14 @@ for ii=16:-1:2
     plot([1 17],[0 0],'--k')
     ylim([-5 15])
     box off
-end
+%end
 xlabel('nr. channels')
 ylabel('\Delta SNR (dB)')
 
 set(gca,'fontsize',fsize)
 fig = gcf;
-saveas(fig,'figs/mcca_it/mcca_it_summary','svg')
-
+saveas(fig,['figs/mcca_it/mcca_it_summary' num2str(ii)],'svg')
+end
 % colorbar
 figure('Renderer','painters')
 colormap(cmap_mcca)

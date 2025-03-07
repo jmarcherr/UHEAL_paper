@@ -1,7 +1,7 @@
 
 clear all
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
-run('/zhome/7e/f/64621/Desktop/UHEAL_paper/UHEAL_startup.m')
+run('/work3/jonmarc/UHEAL_paper/UHEAL_startup.m')
 d = dir('/work3/jonmarc/UHEAL_master/UHEAL_paper/_eeg/_FFR/_outputs/_derivatives/*.mat')
 clc
 for s=1:length(d)
