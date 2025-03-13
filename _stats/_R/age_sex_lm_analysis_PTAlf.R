@@ -71,8 +71,7 @@ for (c in c('PTA_hf',
             'memr_slope',
             'FFR_SNR','FFR_noise','EFR_SNR','EFR_noise',
             'Neg_4Hz','ITPC_ratio',
-            'AEP_p2n1_int',
-            'ABR_NF_slope','ABR_NF_int',
+            'AEP_p2n1_int','AEP_p2n1_slope',
             'acalos_AC_slope_1','acalos_AC_slope_2','acalos_AC_slope_3','acalos_AC_slope_4',
             'rds','nesi','tts','ssq12_mean')){
   temp=print(summary(lm(paste(c,"~ Age+sex+PTA_lf"), data=uheal_data)))
@@ -115,8 +114,7 @@ rownames(age_tab) <-c('PTA_hf',
                       'memr_slope',
                       'FFR_SNR','FFR_noise','EFR_SNR','EFR_noise',
                       'Neg_4Hz','ITPC_ratio',
-                      'AEP_p2n1_int',
-                      'ABR_NF_slope','ABR_NF_int',
+                      'AEP_p2n1_int','AEP_p2n1_slope',
                       'acalos_AC_slope_1','acalos_AC_slope_2','acalos_AC_slope_3','acalos_AC_slope_4',
                       'rds','nesi','tts','ssq12_mean')
 age_tab
@@ -141,8 +139,7 @@ rownames(sex_tab) <-c('PTA_hf',
                       'memr_slope',
                       'FFR_SNR','FFR_noise','EFR_SNR','EFR_noise',
                       'Neg_4Hz','ITPC_ratio',
-                      'AEP_p2n1_int',
-                      'ABR_NF_slope','ABR_NF_int',
+                      'AEP_p2n1_int','AEP_p2n1_slope',
                       'acalos_AC_slope_1','acalos_AC_slope_2','acalos_AC_slope_3','acalos_AC_slope_4',
                       'rds','nesi','tts','ssq12_mean')
 sex_tab
@@ -166,8 +163,7 @@ rownames(pta_tab) <-c('PTA_hf',
                       'memr_slope',
                       'FFR_SNR','FFR_noise','EFR_SNR','EFR_noise',
                       'Neg_4Hz','ITPC_ratio',
-                      'AEP_p2n1_int',
-                      'ABR_NF_slope','ABR_NF_int',
+                      'AEP_p2n1_int','AEP_p2n1_slope',
                       'acalos_AC_slope_1','acalos_AC_slope_2','acalos_AC_slope_3','acalos_AC_slope_4',
                       'rds','nesi','tts','ssq12_mean')
 pta_tab

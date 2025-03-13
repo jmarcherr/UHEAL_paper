@@ -104,9 +104,9 @@ xlim([-0.5 3.5])
 
 %% alternative peak find
 % P1 = 0.045 -  0.065 s
-% N1 = 0.085 -  0.15 s
+% N1 = 0.065 -  0.15 s
 % P2 = 0.15  -  0.25 s
-% N2 = 0.2   -  0.5 s
+% N2 = 0.2   -  0.4 s
 fs = 1032;
 data_all = TS_base;% {TS_base;TS_dss};
 % peak latencies
@@ -181,19 +181,26 @@ end
 close all
 figure('Renderer','painters')
 subplot 121
+marks = {'sq','o','^','v'}
+pcols = cbrewer('qual','Paired',6);
+pcols = pcols([1,5,2,6],:);
 for pp=1:4
-    errorbar(nanmean(p_max_l(nh_idx,1:6,pp)-[0 0.5 1 1.5 2 2.5]),nanstd(p_max_l(nh_idx,1:6,pp)-[0 0.5 1 1.5 2 2.5])/sqrt(length(nh_idx)))
+    errorbar(nanmean(p_max_l(nh_idx,1:6,pp)-[0 0.5 1 1.5 2 2.5]),nanstd(p_max_l(nh_idx,1:6,pp)-[0 0.5 1 1.5 2 2.5])/sqrt(length(nh_idx)),'Marker',marks{pp},'markerfacecolor','none','color',pcols(pp,:),'markeredgecolor','none','markersize',6.8)
     hold on
 end
 hleg = legend('P1','N1','P2','N2')
-hleg.Position = [0.4797 0.7377 0.1268 0.1845];
-xlabel('tone nr.')
+
+hleg.Box = 'off'
+xlabel('Tone number')
 ylabel('latency (s)')
 axis padded
-set(gca,'fontsize',12)
+box off
+set(gca,'fontsize',12,'xtick',[1:6])
+set(gcf,'position',[440 248 697 355])
+hleg.Position = [0.4686 0.7146 0.1019 0.2183];
 fig = gcf;
 saveas(fig,[savepath ' latency_peaks'],'svg')
-
+%%
 % stats for if latency is different from t 1
 for pp=1:4
     this_peak = squeeze(p_max_l(nh_idx,1:6,pp)-[0 0.5 1 1.5 2 2.5])
@@ -238,25 +245,36 @@ end
 % group plots
 idx_all = {YNH_idx,MNH_idx,ONH_idx};
 gcol = {y_col,m_col,o_col};
-marks = {'o','sq','^'}
+marks = {'^','sq','o'}
 tt_titles = {'P1','N1','P2','N2'}
 figure('Renderer','painters')
 for pp=1:4
 subplot(1,4,pp)
 for gg=1:3
-    errorbar([1:6]+0.1*(gg-1),nanmean(p_max_l(idx_all{gg},1:6,pp)-[0 0.5 1 1.5 2 2.5]),nanstd(p_max_l(idx_all{gg},1:6,pp)-[0 0.5 1 1.5 2 2.5])/sqrt(length(idx_all{gg})),'color',gcol{gg},'marker',marks{gg},'markerfacecolor',gcol{gg},'MarkerEdgecolor','k','MarkerSize',6.8)
+    ebgg(gg) = errorbar([1:6]+0.1*(gg-1),nanmean(p_max_l(idx_all{gg},1:6,pp)-[0 0.5 1 1.5 2 2.5]),nanstd(p_max_l(idx_all{gg},1:6,pp)-[0 0.5 1 1.5 2 2.5])/sqrt(length(idx_all{gg})),'color',gcol{gg},'marker',marks{gg},'markerfacecolor',gcol{gg},'MarkerEdgecolor','k','MarkerSize',6.8)
     hold on
 end
 axis padded
-xlabel('tone nr.')
+xlabel('Tone number')
 ylabel('Latency (s)')
 set(gca,'xtick',[1:6],'fontsize',12)
 box off
 title(tt_titles{pp},'FontWeight','normal')
 end
-set(gcf,'position',[18 395 1408 265])
+hleg = legend([ebgg(1) ebgg(2) ebgg(3)],{'Young','Mid. aged','Older'})
+hleg.Box = 'off';
+hleg.Position = [0.8495 0.6874 0.0994 0.2226];
+%set(gcf,'position',[18 395 1408 265])
+set(gcf,'position',[18 289 1408 352])
 fig = gcf;
 saveas(fig,[savepath ' latency_peaks_groups'],'svg')
+
+% latencies N2 for groups
+clc
+g_names = {'y','ma','old'}
+for gg = 1:3
+disp(['N2 Latency ' g_names{gg} ': fist tone:' num2str(nanmean(p_max_l(idx_all{gg},1,4))) '+/-' num2str(nanstd(p_max_l(idx_all{gg},1,4))) ', 2:6 tones: ' num2str(nanmean(nanmean(p_max_l(idx_all{gg},2:6,4)-[0.5 1 1.5 2 2.5],2))) '+/- ' num2str(nanstd(nanmean(p_max_l(idx_all{gg},2:6,4),2))) ])
+end
 %% plotting strategies on traces + peaks as a function of tones
 close all
 
@@ -315,7 +333,7 @@ for ss = 1%1:3 % mixed latencies
         %p50 = P1;
         idx_all = {YNH_idx,MNH_idx,ONH_idx};
         gcol = {y_col,m_col,o_col};
-        marks = {'o','sq','^'}
+        marks = {'^','sq','o'}
         figure(tt)
         set(gcf,'renderer','painters')
         for pp=1:3
@@ -324,7 +342,7 @@ for ss = 1%1:3 % mixed latencies
         end
         box off
         title(tt_titles)
-        xlabel('tone nr.')
+        xlabel('Tone number')
         ylabel('\muV')
         set(gca,'xtick',[1:6])
         set(gca,'fontsize',12)
@@ -353,7 +371,7 @@ for ss = 1%1:3 % mixed latencies
         end
         box off
 
-        xlabel('tone nr.')
+        xlabel('Tone number')
         ylabel('\muV')
         set(gca,'xtick',[1:6],'fontsize',12)
         axis padded
@@ -370,6 +388,14 @@ for ss = 1%1:3 % mixed latencies
 end
 
 %%
+% LP for plotting
+fs = 1024;
+filt_coef = [.5 30]; %4 Hz
+filt_def = designfilt('bandpassfir', 'FilterOrder', 40, ...
+    'CutoffFrequency1', filt_coef(1), 'CutoffFrequency2', filt_coef(2),...
+    'SampleRate', fs);
+% bypassing filtfilt fieldtrip
+addpath('/appl/matlab/990/toolbox/signal/signal/')
 
 for ss=1:size(data_all,1)
     % find average peak latency for each subject
@@ -387,11 +413,11 @@ this_t_idx = find(time_TS>=this_t(1) & time_TS<=this_t(2));
 for gg = 1:3
 % first
 subplot(1,2,1)
-shadedErrorBar(time_TS(this_t_idx),squeeze(nanmean(TS_tones(idx_all{gg},1,:))),...
-    squeeze(nanstd(TS_tones(idx_all{gg},1,:)))/sqrt(length(idx_all{gg})),...
+shadedErrorBar(time_TS(this_t_idx),filtfilt(filt_def,squeeze(nanmean(TS_tones(idx_all{gg},1,:)))),...
+    filtfilt(filt_def,squeeze(nanstd(TS_tones(idx_all{gg},1,:)))/sqrt(length(idx_all{gg}))),...
     'lineprops',{'-','color',gcol{gg},'linewidth',1},'transparent',1)
 hold on
-ylim([-4 2])
+ylim([-4.5 2.5])
 xlim([-0.1 0.5])
 if gg==3
     set(gca,'fontsize',12)
@@ -403,11 +429,11 @@ if gg==3
 end
 % last 5
 subplot(1,2,2)
-s2(gg)=shadedErrorBar(time_TS(this_t_idx),squeeze(nanmean(nanmean(TS_tones(idx_all{gg},2:6,:),2),1)),...
-    squeeze(nanstd(nanmean(TS_tones(idx_all{gg},2:6,:),2),1))/sqrt(length(idx_all{gg})),...
+s2(gg)=shadedErrorBar(time_TS(this_t_idx),filtfilt(filt_def,squeeze(nanmean(nanmean(TS_tones(idx_all{gg},2:6,:),2),1))),...
+    filtfilt(filt_def,squeeze(nanstd(nanmean(TS_tones(idx_all{gg},2:6,:),2),1))/sqrt(length(idx_all{gg}))),...
     'lineprops',{'-','color',gcol{gg},'linewidth',1},'transparent',1)
 hold on
-ylim([-4 2])
+ylim([-4.5 2.5])
 xlim([-0.1 0.5])
 if gg==3
     set(gca,'fontsize',12)
@@ -424,7 +450,11 @@ end
 end
 set(gcf,'position',[61 215 627 480])
 fig = gcf;
-saveas(fig,[savepath 'ERP_firstvsrest'],'svg')
+saveas(fig,[savepath 'ERP_firstvsrest_filt'],'svg')
+
+
+
+
 %% stats full model
 n1p2 = p_max(:,:,3) - p_max(:,:,2);
 idx = ~isnan(n1p2(:,1));

@@ -59,7 +59,7 @@ try
     end
 
     % timelock analysis
-    [time,aep_avg_filt,aep_avg,n1,n1_mean,n1_lat,p2,p2_mean,p2_lat,p1,p1_mean,p1_lat] = AEP_timelock(vts,data_cond,ids);
+    [time,aep_avg_filt,aep_avg,n1,n1_mean,n1_lat,p2,p2_mean,p2_lat,p1,p1_mean,p1_lat,n2,n2_mean,n2_lat,p2_fix,p2_lat_fix,n1_fix,n1_lat_fix] = AEP_timelock(vts,data_cond,ids);
 
     %% save processed AEP
     data_aep = struct;
@@ -73,11 +73,18 @@ try
     data_aep.p1_mean = p1_mean;
     data_aep.n1 = n1;
     data_aep.n1_mean = n1_mean;
+    data_aep.n1_fix = n1_fix;
+    data_aep.n1_lat_fix = n1_lat_fix;
     data_aep.p2 = p2;
     data_aep.p2_mean = p2_mean;
+    data_aep.p2_fix = p2_fix;
+    data_aep.p2_lat_fix = p2_lat_fix;
+    data_aep.n2 = n2;
+    data_aep.n2_mean = n2_mean;
     data_aep.p1_lat = p1_lat;
     data_aep.n1_lat = n1_lat;
     data_aep.p2_lat = p2_lat;
+    data_aep.n2_lat = n2_lat;
     data_aep.subinfo = data.subinfo;
     data_aep.subid = data.subid;
 

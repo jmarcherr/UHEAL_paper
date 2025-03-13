@@ -54,8 +54,8 @@ uheal_data_res$AP_amp_pm_res <-resid((lm("AP_amp_pm~Age",data=uheal_data_res,na.
 uheal_data_res$FFR_SNR_res <-resid(lm("FFR_SNR~Age",data=uheal_data_res,na.action=na.exclude))
 uheal_data_res$WV_amp_pm_res <-resid(lm("WV_amp_pm~Age",data=uheal_data_res,na.action=na.exclude))
 uheal_data_res$EFR_SNR_res <-resid(lm("EFR_SNR~Age",data=uheal_data_res,na.action=na.exclude))
-uheal_data_res$neg_4Hz_res <-resid(lm("neg_4Hz~Age",data=uheal_data_res,na.action=na.exclude))
-uheal_data_res$itpc_ratio_4Hz_res <-resid(lm("itpc_ratio_4Hz~Age",data=uheal_data_res,na.action=na.exclude))
+uheal_data_res$neg_4Hz_res <-resid(lm("Neg_4Hz~Age",data=uheal_data_res,na.action=na.exclude))
+uheal_data_res$itpc_ratio_4Hz_res <-resid(lm("ITPC_ratio~Age",data=uheal_data_res,na.action=na.exclude))
 uheal_data_res$AEP_n1_4_res <-resid(lm("AEP_n1_4~Age",data=uheal_data_res,na.action=na.exclude))
 uheal_data_res$AEP_p2_1_res <-resid(lm("AEP_p2_1~Age",data=uheal_data_res,na.action=na.exclude))
 
@@ -110,7 +110,7 @@ out=NULL
 age_tab=NULL
 for (c in c('AP_amp_pm_res','WV_amp_pm_res','EFR_SNR_res',
             'neg_4Hz_res','itpc_ratio_4Hz_res',
-            'AEP_n1_4_res','AEP_p2_4_res','Age')){
+            'AEP_n1_4_res','AEP_p2_1_res','Age')){
   temp=print(summary(lm(paste(c,"~ FFR_SNR"), data=uheal_data_res)))
   # age values
   est_age = rbind(est_age,summary(lm(paste(c,"~ FFR_SNR_res"), data=uheal_data_res))$coefficients[2,1])
@@ -136,7 +136,6 @@ rownames(age_tab) <-c('AP_amp_pm','WV_amp_pm','EFR_SNR',
                       'neg_4Hz','itpc_ratio_4Hz',
                       'AEP_n1_4','AEP_p2_4','Age')
 age_tab
-setwd('~/Documents/_postdoc/UHEAL_paper/_statsR/Tables')
 out<-kable(age_tab)
 write.csv2(age_tab, "FFR_corr_residuals.csv")
 
@@ -151,7 +150,7 @@ out=NULL
 age_tab=NULL
 for (c in c('AP_amp_pm_res','WV_amp_pm_res','FFR_SNR_res','EFR_SNR_res',
             'neg_4Hz_res',
-            'AEP_n1_4_res','AEP_p2_4_res','Age')){
+            'AEP_n1_4_res','AEP_p2_1_res','Age')){
   temp=print(summary(lm(paste(c,"~ itpc_ratio_4Hz_res"), data=uheal_data_res)))
   # age values
   est_age = rbind(est_age,summary(lm(paste(c,"~ itpc_ratio_4Hz_res"), data=uheal_data_res))$coefficients[2,1])
@@ -175,7 +174,7 @@ age_tab <-data.frame(df = df_all,
                      p_corr = p_corr_age)
 rownames(age_tab) <-c('AP_amp_pm','WV_amp_pm','FFR_SNR','EFR_SNR',
                       'neg_4Hz',
-                      'AEP_n1_4','AEP_p2_4','Age')
+                      'AEP_n1_4','AEP_p2_1','Age')
 age_tab
 out<-kable(age_tab)
 write.csv2(age_tab, "ITPC_corr_residuals.csv")

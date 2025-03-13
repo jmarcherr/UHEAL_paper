@@ -62,14 +62,14 @@ out=NULL
 age_tab=NULL
 for (c in c('PTA_lf','PTA_hf',
             'teoae_SNR_1','teoae_SNR_2','teoae_SNR_3','teoae_SNR_4','teoae_SNR_5',
-            'SP_amp','AP_amp_pm','WV_amp_pm',
+            'SP_amp','AP_amp_pm','WV_amp_pm','abr_IV_ratio',
             'AP_lat','WV_lat',
             'memr_slope',
             'FFR_SNR','FFR_noise','EFR_SNR','EFR_noise',
             'Neg_4Hz','ITPC_ratio',
-            'AEP_p2n1_int',
+            'AEP_p2n1_int','AEP_p2n1_slope',
             'acalos_AC_slope_1','acalos_AC_slope_2','acalos_AC_slope_3','acalos_AC_slope_4',
-            'rds','nesi','tts','ssq12_mean')){
+            'nesi','tts','ssq12_mean')){
   temp=print(summary(lm(paste(c,"~ Age+sex"), data=uheal_data)))
   # age values
   est_age = rbind(est_age,summary(lm(paste(c,"~ Age+sex"), data=uheal_data))$coefficients[2,1])
@@ -100,14 +100,14 @@ age_tab <-data.frame(df = df_all,
                      p_corr_hoch = p_corr_age_hoch)
 rownames(age_tab) <-c('PTA_lf','PTA_hf',
                       'teoae_SNR_1','teoae_SNR_2','teoae_SNR_3','teoae_SNR_4','teoae_SNR_5',
-                      'SP_amp','AP_amp_pm','WV_amp_pm',
+                      'SP_amp','AP_amp_pm','WV_amp_pm','abr_IV_ratio',
                       'AP_lat','WV_lat',
                       'memr_slope',
                       'FFR_SNR','FFR_noise','EFR_SNR','EFR_noise',
                       'Neg_4Hz','ITPC_ratio',
-                      'AEP_p2n1_int',
+                      'AEP_p2n1_int','AEP_p2n1_slope',
                       'acalos_AC_slope_1','acalos_AC_slope_2','acalos_AC_slope_3','acalos_AC_slope_4',
-                      'rds','nesi','tts','ssq12_mean')
+                      'nesi','tts','ssq12_mean')
 age_tab
 
 out<-kable(age_tab)
@@ -125,14 +125,14 @@ sex_tab <-data.frame(df = df_all,
                      p_corr_hoch = p_corr_sex_hoch)
 rownames(sex_tab) <-c('PTA_lf','PTA_hf',
                       'teoae_SNR_1','teoae_SNR_2','teoae_SNR_3','teoae_SNR_4','teoae_SNR_5',
-                      'SP_amp','AP_amp_pm','WV_amp_pm',
+                      'SP_amp','AP_amp_pm','WV_amp_pm','abr_IV_ratio',
                       'AP_lat','WV_lat',
                       'memr_slope',
                       'FFR_SNR','FFR_noise','EFR_SNR','EFR_noise',
                       'Neg_4Hz','ITPC_ratio',
-                      'AEP_p2n1_int',
+                      'AEP_p2n1_int','AEP_p2n1_slope',
                       'acalos_AC_slope_1','acalos_AC_slope_2','acalos_AC_slope_3','acalos_AC_slope_4',
-                      'rds','nesi','tts','ssq12_mean')
+                      'nesi','tts','ssq12_mean')
 sex_tab
 
 out<-kable(sex_tab)

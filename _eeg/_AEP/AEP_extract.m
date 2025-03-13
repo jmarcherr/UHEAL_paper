@@ -87,7 +87,7 @@ for ii=1:4
     eb(1,ii)=errorbar(rates(ii)+.01,nanmean(n1_sub(ONH_idx,ii)),nanstd(n1_sub(ONH_idx,ii))/sqrt(length(ONH_idx)),'ko','color',o_col,'markerfacecolor',o_col,'MarkerEdgecolor','k')
 end
 
-ylabel('N100\muV')
+ylabel('N1 \muV')
 xlabel('ISI (s)')
 set(gca,'fontsize',12)
 set(gcf,'position',[163 12 270 266])
@@ -118,7 +118,7 @@ for ii=1:4
 end
 
 
-ylabel('P200\muV')
+ylabel('P2 \muV')
 xlabel('ISI (s)')
 set(gca,'fontsize',12)
 set(gcf,'position',[438 10 270 266])
@@ -129,6 +129,31 @@ fig=gcf
 box off
 saveas(fig,'/work3/jonmarc/UHEAL_paper/_eeg/_AEP/_outputs/figs/p200_age_group','svg')
 
+% N2
+figure('Renderer','painter')
+% Young
+plot(rates,nanmean(n2_sub(YNH_idx,:)),'color',y_col)
+hold on
+plot(rates,nanmean(n2_sub(MNH_idx,:)),'color',m_col)
+plot(rates,nanmean(n2_sub(ONH_idx,:)),'-','color',o_col)
+for ii=1:4
+    eb(2,ii)=errorbar(rates(ii)-.01,nanmean(n2_sub(YNH_idx,ii)),nanstd(n2_sub(YNH_idx,ii))/sqrt(length(YNH_idx)),'^','color',y_col,'markerfacecolor',y_col,'MarkerEdgecolor','k','MarkerSize',6.8)
+    eb(2,ii)=errorbar(rates(ii),nanmean(n2_sub(MNH_idx,ii)),nanstd(n2_sub(MNH_idx,ii))/sqrt(length(MNH_idx)),'sq','color',m_col,'markerfacecolor',m_col,'MarkerEdgecolor','k','MarkerSize',6.8)
+    eb(1,ii)=errorbar(rates(ii)+.01,nanmean(n2_sub(ONH_idx,ii)),nanstd(n2_sub(ONH_idx,ii))/sqrt(length(ONH_idx)),'o','color',o_col,'markerfacecolor',o_col,'MarkerEdgecolor','k')
+
+end
+
+
+ylabel('N2 \muV')
+xlabel('ISI (s)')
+set(gca,'fontsize',12)
+set(gcf,'position',[438 10 270 266])
+set(gca,'xtick',rates)
+xlim([0.5 2.5])
+ylim([-4 -1])
+fig=gcf
+box off
+saveas(fig,'/work3/jonmarc/UHEAL_paper/_eeg/_AEP/_outputs/figs/n200_age_group','svg')
 % P2-N1 complex
 % P2
 figure('Renderer','painters')
@@ -145,7 +170,7 @@ for ii=1:4
 
 end
 
-ylabel('P200-N100\muV')
+ylabel('P2-N1 \muV')
 xlabel('ISI (s)')
 set(gca,'fontsize',12)
 set(gcf,'position',[714 8 270 266])
@@ -199,7 +224,7 @@ for ii=1:4
 end
 
 
-ylabel('P50\muV')
+ylabel('P1 \muV')
 xlabel('ISI (s)')
 set(gca,'fontsize',12)
 set(gcf,'position',[438 10 270 266])

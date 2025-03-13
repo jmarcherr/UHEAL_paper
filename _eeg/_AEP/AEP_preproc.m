@@ -60,9 +60,19 @@ try
         cfg.trl(cfg.trl(:,4)==triggers(tt),4) = 1; % all the same trigger
     end
     % get missing trials
+    % tmp = (cfg.trl(2:end,:)-cfg.trl(1:end-1,:));
+    % missing_trials = find(tmp(:,1)>=3.8e4);
+    % get missing trials
     tmp = (cfg.trl(2:end,:)-cfg.trl(1:end-1,:));
-    missing_trials = find(tmp(:,1)>=3.8e4);
-
+    %unique trial lengths
+    unique_tl = [13106 13107 21298 21299 29490 29491 37682 37683];
+    % find wrong trial times
+    [tl_w,tl_i] = setdiff(tmp(:,1),unique_tl);
+    if ~isempty(tl_w)
+        missing_trials = [find(tmp(:,1)>=3.8e4) tl_i];
+    else
+        missing_trials = find(tmp(:,1)>=3.8e4);
+    end
     %initial preprocessing
     data_int = ft_preprocessing(cfg);
 

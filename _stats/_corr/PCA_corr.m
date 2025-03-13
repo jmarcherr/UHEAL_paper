@@ -400,7 +400,7 @@ fig=gcf;
 set(fig,'renderer','painters')
 %cd(root
 set(gcf,'position',[100 100 397 400]*(96/72))
-saveas(fig,['figs/corr_eeg'],'svg')
+%saveas(fig,['figs/corr_eeg'],'svg')
 %% correlation with questionaires
 uheal_nh.nesi_log = log10(uheal_nh.nesi); uheal_nh.nesi_log(isinf(uheal_nh.nesi_log))=nan;
 clinnames = {'nesi_log','tts','ssq12_mean','PTA_lf','PTA_hf','memr_slope'}

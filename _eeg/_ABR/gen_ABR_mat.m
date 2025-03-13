@@ -46,6 +46,7 @@ uheal_data.AP_lat =  nan(size(uheal_data.subid));
 uheal_data.WV_amp = nan(size(uheal_data.subid));
 uheal_data.WV_amp_pm = nan(size(uheal_data.subid));
 uheal_data.WV_lat =  nan(size(uheal_data.subid));
+uheal_data.abr_IV_ratio = nan(size(uheal_data.subid));
 
 for s=1:length(subid)
     % get this subid
@@ -61,6 +62,7 @@ for s=1:length(subid)
         uheal_data.WV_lat(this_idx) = sub_peaks{s}.WV_latency;
         uheal_data.AP_amp_pm(this_idx) = AP_amp_pm(s);
         uheal_data.WV_amp_pm(this_idx) = WV_amp_pm(s);
+        uheal_data.abr_IV_ratio(this_idx) = sub_peaks{s}.AP_amp/sub_peaks{s}.WV_amp;
     end
 end
 disp(['ABR data done'])
