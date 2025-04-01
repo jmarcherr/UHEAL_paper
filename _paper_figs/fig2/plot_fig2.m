@@ -140,7 +140,31 @@ figure
 fig = gcf;
 saveas(fig,[savepath 'SP_age'],'svg')
 
+%% SP/AP ratio
+% SP
+var = 'abr_SPAP_ratio';
+labels = 'SP/AP ratio'
+lims = [-0.19 0.29];
+figure
+[h,ax1,ax2]=stat_plots_uh_age_pt(uheal_data,var,labels,lims)
+%hleg.Position = [0.5320 0.7793 0.2155 0.1272]
+%set(hleg,'Visible','off')
+fig = gcf;
+saveas(fig,[savepath 'SPAP_age'],'svg')
+%%
+scatter(uheal_data.AP_amp_pm(find(uheal_data.CP_new==0)),uheal_data.abr_SPAP_ratio(find(uheal_data.CP_new==0)))
+xlabel('AP amplitude')
+ylabel('SP/AP ratio')
+lsline
+this_idx = find(uheal_data.CP_new==0 & ~isnan(uheal_data.AP_amp_pm))
+[rho,p] = corr(uheal_data.AP_amp_pm(this_idx,:),uheal_data.abr_SPAP_ratio(this_idx,:),'type','spearman')
+text(.7,.6,[' r = ' num2str(round(rho,3)) '\newline p = ' num2str(round(p,3))])
+set(gcf,'position',[508 385 327 233])
 
+[rho,p] = corr(uheal_data.Age(this_idx,:),uheal_data.abr_SPAP_ratio(this_idx,:),'type','spearman')
+%text(.7,.3,[' AGE: r = ' num2str(round(rho,3)) '\newline p = ' num2str(round(p,3))])
+fig = gcf;
+saveas(fig,[savepath 'SPAP_AP'],'svg')
 %% plotting functions
 function [fig1,fig2]=plot_abr(t_abr,sub_abr,age)
 cm = cbrewer('qual','Set1',10)

@@ -496,7 +496,7 @@ lme = fitlme(tab,'n1p2~age*tonenr+(1|subnum)')
 
 %% first tone vs. rest for all peaks
 clear lme
-for tt=1:size(peak_all,2)
+for tt=1:3%size(peak_all,2)
 this_mean = [peak_all{tt}(:,1) mean(peak_all{tt}(:,2:end),2)];
 idx = nh_idx;%~isnan(this_mean(:,1));
 % reshape

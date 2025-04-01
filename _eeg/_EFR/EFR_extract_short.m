@@ -61,12 +61,12 @@ for s=1:length(subs)
         F_crit(s,:) = nan(1,16);
         sig_idx(s,:) = zeros(1,16);
         sig_idx_cz(s) = 0;
-        f_fft(s,:,:) = nan(16,4097);
-        fft_freq(s,:) = nan(1,4097);
+        f_fft(s,:,:) = nan(16,1025);
+        fft_freq(s,:) = nan(1,1025);
         TS(s,:,:) = nan(16,2458);
 
         fft_noise(s,:) = nan(1,16);
-        noisef(s,:,:) = nan(16,4097);
+        noisef(s,:,:) = nan(16,1025);
         subinfo{s} = data.subinfo;
 
         % 3 channel average
@@ -97,7 +97,7 @@ YNH_idx = find(age<=25 & ~CP & sig_idx_avg);
 MANH_idx = find(age>25 & age<50 & ~CP & sig_idx_avg);
 ONH_idx = find(age>=50 & ~CP & sig_idx_avg);
 NH_idx = find(~CP & sig_idx_avg);
-nh_all = find(~CP)
+nh_all = find(~CP &  ~isnan(age))
 
 %% time series
 close all
@@ -160,11 +160,11 @@ close  all
 scatter(age(find(sig_idx_avg==1)),SNR_avg(find(sig_idx_avg==1)))
 hold  on
 scatter(age(find(sig_idx_cz ==1)),FFR_SNR(find(sig_idx_cz==1),10))
-[rho,pval]=corr(age(NH_idx)',FFR_SNR(NH_idx,10))
+[rho,pval]=corr(age(nh_all)',FFR_SNR(nh_all,10))
 [rho,pval]=corr(age(NH_idx)',SNR_avg(NH_idx)')
 
 figure
-scatter(age(nh_all),SNR_avg(nh_all))
+scatter(age(nh_all),FFR_SNR(nh_all,10))
 hold on
 plot([18 80],db([F_crit_avg(1) F_crit_avg(1)]),'k--')
 

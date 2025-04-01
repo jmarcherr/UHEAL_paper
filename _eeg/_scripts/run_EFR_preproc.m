@@ -1,6 +1,6 @@
 % run EFR preproc
 clear all
-cd('/work3/jonmarc/UHEAL_master/UHEAL_paper')
+cd('/work3/jonmarc/UHEAL_paper')
 UHEAL_startup
 cd(rootdir)
 ft_defaults

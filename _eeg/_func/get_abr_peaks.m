@@ -3,6 +3,7 @@ function [abr_peaks] = get_abr_peaks(data_in,t_abr)
 
 ap_peak = find(t_abr>0e-3 & t_abr<2.3e-3);
 wv_peak = find(t_abr>3.5e-3 & t_abr<9e-3); % 4-7 ms before
+baseline = find(t_abr>0e-3 & t_abr<1e-3); % lowest amplitude within the firstmsec (liberman 2016)
 %sp_peak = find(t_abr>0e-3 & t_abr<.7e-3);
 
 if ~isempty(data_in)
@@ -25,6 +26,10 @@ if ~isempty(data_in)
         abr_peaks.WV_latency = t_abr(this_wv);
         [abr_peaks.WV_neg,WV_neg_lat] = min(squeeze(data_in(this_wv:this_wv+20)));
         abr_peaks.WV_neg_latency = t_abr(WV_neg_lat-1+this_wv);
+
+        % Baseline
+        [abr_peaks.baseline,~] = min(squeeze(data_in(baseline)));
+
     else
         abr_peaks.SP_amp =nan;
         abr_peaks.AP_amp = nan;
@@ -35,6 +40,7 @@ if ~isempty(data_in)
         abr_peaks.WV_latency = nan;
         abr_peaks.WV_neg = nan;
         abr_peaks.WV_neg_latency = nan;
+        abr_peaks.baseline = nan;
 end
 
 end

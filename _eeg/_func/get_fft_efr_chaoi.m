@@ -5,11 +5,20 @@ this_fft = nanmean(fft_sub(chaoi,:));
 
 % get SNR
 %get noise
-noisebw = 20;
+noisebw = 20; % noise band-width
 linenoise = [100]';
+
 nbins = find([f>=(fid-noisebw) & ...
-    f<=(fid+noisebw) &  f~=fid & ...
-    f~=linenoise]);
+    f<=(fid+noisebw) & f~=fid & f~=linenoise]);
+%+/- 4Hz for harmonics of rep rate
+nbins(find(f(nbins)>fid+0.5 & f(nbins)<fid+5)) = [];
+nbins(find(f(nbins)>fid-5 & f(nbins)<fid-0.5)) = [];
+
+% noisebw = 20;
+% linenoise = [100]';
+% nbins = find([f>=(fid-noisebw) & ...
+%     f<=(fid+noisebw) &  f~=fid & ...
+%     f~=linenoise]);
 
 this_noise = mean(this_fft(nbins));
 

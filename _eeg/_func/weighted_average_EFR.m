@@ -26,8 +26,8 @@ for cc=1:size(data_cc,1)
     catdata = [];
     catnoise = [];
     % How many epochs to group
-    epochs_x_trial = 4;
-    epochs_x_trial_noise = 11;
+    epochs_x_trial = 4; % 4 before
+    epochs_x_trial_noise = 11; % 11 before
     % Create a Trial linking epochs_x_trial
     num_full_trials = floor(size(squeeze(data_weighted(cc,tidx_FFR,:)),2)/epochs_x_trial);
     num_full_trials_noise = floor(size(squeeze(data_weighted(cc,tidx_FFR,:)),2)/epochs_x_trial_noise);

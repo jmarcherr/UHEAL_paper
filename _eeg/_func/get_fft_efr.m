@@ -19,11 +19,13 @@ for cc=1:chans
     f_fft_sub_pow = fft_sub(cc,find(f==fid));
     
     %get noise
-    noisebw = 20;
+    noisebw = 20; % noise band-width
     linenoise = [100]';
     nbins = find([f>=(fid-noisebw) & ...
         f<=(fid+noisebw) & f~=fid & f~=linenoise]);
-    
+    %+/- 4Hz for harmonics of rep rate
+    nbins(find(f(nbins)>fid+0.5 & f(nbins)<fid+5)) = [];
+    nbins(find(f(nbins)>fid-5 & f(nbins)<fid-0.5)) = [];
 
     f_fft_noise(cc,:) = mean(fft_sub(cc,nbins));
     
