@@ -39,7 +39,15 @@ end
 
 %% gather evertyhing and save
 uheal_data.SP_amp = nan(size(uheal_data.subid));
-%uheal_data.SP_lat = nan(size(uheal_data.subid));
+uheal_data.SP_amp_peak = nan(size(uheal_data.subid));
+uheal_data.SP_lat = nan(size(uheal_data.subid));
+
+% manual SP peaks
+% check plot_fig2_SP_man.m for extracted peaks
+load('/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_outputs/SP_manual_peaks/sp_man_peaks.mat')
+uheal_data.SP_amp_man = sp_man_peaks(2,:)';
+uheal_data.SP_lat_man = sp_man_peaks(1,:)';
+
 uheal_data.AP_amp = nan(size(uheal_data.subid));
 uheal_data.AP_amp_pm = nan(size(uheal_data.subid));
 uheal_data.AP_lat =  nan(size(uheal_data.subid));
@@ -49,6 +57,8 @@ uheal_data.WV_lat =  nan(size(uheal_data.subid));
 uheal_data.abr_IV_ratio = nan(size(uheal_data.subid));
 uheal_data.abr_SPAP_ratio = nan(size(uheal_data.subid));
 uheal_data.abr_baseline = nan(size(uheal_data.subid));
+
+
 for s=1:length(subid)
     % get this subid
     thisID = str2double(subid{s}(3:5))
@@ -57,6 +67,8 @@ for s=1:length(subid)
 
 
         uheal_data.SP_amp(this_idx) = sub_peaks{s}.SP_amp;%-sub_peaks{s}.baseline;
+        uheal_data.SP_amp_peak(this_idx) = sub_peaks{s}.SP_amp_peak;
+        uheal_data.SP_lat(this_idx) = sub_peaks{s}.SP_latency;
         uheal_data.AP_amp(this_idx) = sub_peaks{s}.AP_amp;
         uheal_data.AP_lat(this_idx) = sub_peaks{s}.AP_latency;
         uheal_data.WV_amp(this_idx) = sub_peaks{s}.WV_amp;
@@ -64,7 +76,9 @@ for s=1:length(subid)
         uheal_data.AP_amp_pm(this_idx) = AP_amp_pm(s);
         uheal_data.WV_amp_pm(this_idx) = WV_amp_pm(s);
         uheal_data.abr_IV_ratio(this_idx) = sub_peaks{s}.AP_amp/sub_peaks{s}.WV_amp;
-        uheal_data.abr_SPAP_ratio(this_idx) = (sub_peaks{s}.SP_amp-sub_peaks{s}.baseline)/(sub_peaks{s}.AP_amp-sub_peaks{s}.baseline);
+        %uheal_data.abr_SPAP_ratio(this_idx) = (sub_peaks{s}.SP_amp-sub_peaks{s}.baseline)/(sub_peaks{s}.AP_amp-sub_peaks{s}.baseline);
+        uheal_data.abr_SPAP_ratio(this_idx) = (uheal_data.SP_amp_man(this_idx)-sub_peaks{s}.baseline)/(sub_peaks{s}.AP_amp-sub_peaks{s}.baseline);
+        %uheal_data.SP_amp_man(this_idx) = uheal_data.SP_amp_man(this_idx)-sub_peaks{s}.baseline;
         uheal_data.abr_baseline(this_idx) = sub_peaks{s}.baseline;
     end
 end

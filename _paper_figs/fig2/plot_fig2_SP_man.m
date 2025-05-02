@@ -45,7 +45,8 @@ end
 abr_data = struct;
 abr_data.subid = uheal_data.subid;
 abr_data.SP_amp = nan(size(uheal_data.subid));
-%uheal_data.SP_lat = nan(size(uheal_data.subid));
+abr_data.SP_amp_peak = nan(size(uheal_data.subid));
+abr_data.SP_lat = nan(size(uheal_data.subid));
 abr_data.AP_amp = nan(size(uheal_data.subid));
 abr_data.AP_amp_pm = nan(size(uheal_data.subid));
 abr_data.AP_lat =  nan(size(uheal_data.subid));
@@ -59,7 +60,8 @@ for s=1:length(subid)
     this_idx = find(uheal_data.subid==thisID);
     if ~isempty(sub_peaks{s})
     abr_data.SP_amp(this_idx) = sub_peaks{s}.SP_amp;
-    %uheal_data.SP_lat(this_idx) = SP_lat(s);
+    abr_data.SP_amp_peak(this_idx) = sub_peaks{s}.SP_amp_peak;
+    abr_data.SP_lat(this_idx) = sub_peaks{s}.SP_latency;
     abr_data.AP_amp(this_idx) = sub_peaks{s}.AP_amp;
     abr_data.AP_lat(this_idx) = sub_peaks{s}.AP_latency;
     abr_data.WV_amp(this_idx) = sub_peaks{s}.WV_amp;
@@ -82,7 +84,26 @@ abr_sub_trace.gender = gender';
 
 
 %save('/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_outputs/abr_data_table/abr_sub_trace','-struct','abr_sub_trace')
-
+%% get manual SP amp
+for ss=60%1:length(abr_data.SP_amp_peak)
+    if isnan(abr_data.SP_amp_peak(ss))
+        sp_man(ss) = nan;
+        sp_man_lat(ss) = nan;
+    else
+       
+     p1=plot(abr_sub_trace.t_abr(:,1)', abr_sub_trace.sub_abr_b(ss,:));
+     hold on
+     plot(abr_data.SP_lat(ss),abr_data.SP_amp_peak(ss),'x')
+     plot(abr_data.SP_lat(ss),abr_data.SP_amp(ss),'o')
+     xlim([-2e-3 8e-3])
+     title(['subid: ' subid{ss}])
+     grid on
+     hold off
+     [output]=getABRwaves(gcf,'SP',p1,abr_data.SP_lat(ss)-1/16384,abr_data.SP_amp_peak(ss));
+     sp_man(ss) = output(1);
+     sp_man_lat(ss) = output(2);
+    end
+end
 %% get groups
 
 close all
@@ -104,7 +125,8 @@ sub_abr_group{3} = sub_abr_ONH;
 abr_data_nh = IndexedStructCopy(abr_data,find(~abr_sub_trace.CP & ~abr_sub_trace.rjt_sub));
 
 [fig5a]=plot_abr_group(abr_sub_trace.t_abr(:,1)',sub_abr_group,abr_data)
-saveas(fig5a,[savepath 'abr_grouped'],'svg')
+%saveas(fig5a,[savepath 'abr_grouped'],'svg')
+
 
 
 %% Stats
@@ -129,7 +151,6 @@ figure
 %set(hleg,'Visible','off')
 fig = gcf;
 saveas(fig,[savepath 'WV_age'],'svg')
-
 % SP
 var = 'SP_amp';
 labels = '\muV'
@@ -141,18 +162,8 @@ figure
 fig = gcf;
 saveas(fig,[savepath 'SP_age'],'svg')
 
-% SP manual and baseline corrected
-var = 'SP_amp_man';
-labels = '\muV'
-lims = [-0.19 0.29];
-figure
-[h,ax1,ax2]=stat_plots_uh_age_pt(uheal_data,var,labels,lims)
-%hleg.Position = [0.5320 0.7793 0.2155 0.1272]
-%set(hleg,'Visible','off')
-fig = gcf;
-saveas(fig,[savepath 'SP_age_man'],'svg')
-
-% SPAP ratio
+%% SP/AP ratio
+% SP
 var = 'abr_SPAP_ratio';
 labels = 'SP/AP ratio'
 lims = [-0.19 0.29];
@@ -162,8 +173,6 @@ figure
 %set(hleg,'Visible','off')
 fig = gcf;
 saveas(fig,[savepath 'SPAP_age'],'svg')
-
-
 %%
 scatter(uheal_data.AP_amp_pm(find(uheal_data.CP_new==0)),uheal_data.abr_SPAP_ratio(find(uheal_data.CP_new==0)))
 xlabel('AP amplitude')
@@ -384,4 +393,40 @@ for iField = 1:numel(FieldList)
    Field    = FieldList{iField};
    T.(Field) = S.(Field)(Condition);
 end
+end
+
+% get peaks
+function [output] = getABRwaves(fig,titstring,p1,x_val,y_val)
+%fig = figure;
+%plot(x,y,'Color',[0,0.7,0.9])
+title(titstring)
+% Enable data cursor mode
+datacursormode on
+dcm_obj = datacursormode(fig);
+datatip(p1, x_val, y_val);
+% Set update function
+set(dcm_obj,'UpdateFcn',@myupdatefcn)
+% Wait while the user to click
+disp('Click line to display a data tip, then press "Return"')
+pause
+% Export cursor to workspace
+info_struct = getCursorInfo(dcm_obj);
+if isfield(info_struct, 'Position')
+    disp('Clicked positioin is')
+    disp(info_struct.Position)
+end
+output =info_struct.Position
+
+    function [output_txt, output_value] = myupdatefcn(~,event_obj)
+        % ~            Currently not used (empty)
+        % event_obj    Object containing event data structure
+        % output_txt   Data cursor text
+        pos = get(event_obj, 'Position');
+        output_txt = {['x: ' num2str(pos(1))], ['y: ' num2str(pos(2))]};
+        output_value = [pos(1) pos(2)];
+    end
+
+
+%xwave = output_value(1);
+%ywave = output_value(2);
 end

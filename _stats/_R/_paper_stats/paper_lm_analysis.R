@@ -49,6 +49,9 @@ uheal_data$teoae_SNR_3[uheal_data$teoae_sig_3==0]<-NaN
 uheal_data$teoae_SNR_4[uheal_data$teoae_sig_4==0]<-NaN
 uheal_data$teoae_SNR_5[uheal_data$teoae_sig_5==0]<-NaN
 
+## SP amp change
+uheal_data$SP_amp<-uheal_data$SP_amp_man  
+
 summary(uheal_data)
 str(uheal_data)
 
@@ -388,6 +391,8 @@ uheal_data$EFR_SNR[uheal_data$EFR_sig==0] <- NaN
 uheal_data$FFR_noise[uheal_data$FFR_sig==0] <-NaN
 uheal_data$EFR_noise[uheal_data$EFR_sig==0] <- NaN
 
+## SP amp correction
+uheal_data$SP_amp <-uheal_data$SP_amp_man
 
 # post-hoc correlations for peripheral measures
 myvars  = c('AP_amp_pm','FFR_SNR','EFR_SNR','memr_slope')
@@ -434,15 +439,15 @@ x<-matrix(factor("1"),nrow = length(uheal_data$tone_p2_1),ncol=1)
 y<-matrix(factor("2"),nrow = length(uheal_data$tone_p2_1),ncol=1)
 
 
-tmp<-data.frame(cbind(uheal_data$subid,uheal_data$Age,uheal_data$tone_p2_first,uheal_data$tone_p2_rest))
-tmp <-cbind(tmp[1:2],stack(tmp[3:4]))
-colnames(tmp) <-c('subid','Age','P2_amp','tone_number')
+tmp<-data.frame(cbind(uheal_data$subid,uheal_data$Age,uheal_data$PTA_lf,uheal_data$tone_p2_first,uheal_data$tone_p2_rest))
+tmp <-cbind(tmp[1:3],stack(tmp[4:5]))
+colnames(tmp) <-c('subid','Age','PTA_lf','P2_amp','tone_number')
 tmp$tone_number <-factor(tmp$tone_number)
 levels(tmp$tone_number) <- c("1", "2")
 #tmp$subid <- factor(tmp$subid)
 tmp <- tmp[order(tmp$subid),]
 # lm model for first vs rest
-m.sem <-lmer("P2_amp~Age*tone_number+(1|subid)",data = tmp)
+m.sem <-lmer("P2_amp~Age*tone_number+PTA_lf+(1|subid)",data = tmp)
 # extract coefficients
 coefs <- data.frame(coef(summary(m.sem)))
 # use normal distribution to approximate p-value
@@ -620,7 +625,7 @@ write.csv2(pta_tab, "7_PTAhf_tab_PTAhf_corrected.csv")
 
 summary(lm("AP_amp_pm~ Age+sex+PTA_hf", data=uheal_data))
 summary(lm("FFR_SNR~Age+sex+PTA_hf", data=uheal_data))
-summary(lm("abr_SPAP_ratio~Age+sex+PTA_hf", data=uheal_data))
+summary(lm("abr_SPAP_ratio~Age+sex+PTA_lf", data=uheal_data))
 
 
         
