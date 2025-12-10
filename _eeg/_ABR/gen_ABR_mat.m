@@ -43,7 +43,7 @@ uheal_data.SP_amp_peak = nan(size(uheal_data.subid));
 uheal_data.SP_lat = nan(size(uheal_data.subid));
 
 % manual SP peaks
-% check plot_fig2_SP_man.m for extracted peaks
+% check /work3/jonmarc/UHEAL_paper/_paper_figs/fig2/plot_fig2_SP_man.m for extracted peaks
 load('/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_outputs/SP_manual_peaks/sp_man_peaks.mat')
 uheal_data.SP_amp_man = sp_man_peaks(2,:)';
 uheal_data.SP_lat_man = sp_man_peaks(1,:)';

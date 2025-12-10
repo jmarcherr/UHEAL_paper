@@ -29,6 +29,10 @@ for s=1:length(d)
     aud_L(s,:,:) = results{s}.aud_L;
     aud_R(s,:,:) = results{s}.aud_R;
     aud_freq(s,:) = results{s}.aud_freq;
+    %%%%%
+    % find nan values in audiogram
+    nanidx_aud = find(isnan(aud_freq)); aud(nanidx_aud) = nan;
+    
     PTA_HF(s) = nanmean(results{s}.aud(7:end)); % PTA 9-16k
     %PTA_LF(s) = nanmean(results{s}.aud(1:6));   % PTA 250-8k
     PTA_LF(s) = nanmean(results{s}.aud(1:4)); % PTA 250-2k
@@ -37,6 +41,8 @@ for s=1:length(d)
     HV_sub(s) = results{s}.HV_sub;
     subid(s) = str2double(results{s}.sub_id(3:5));
 end
+
+
 %
 %load('/work1/jonmarc/UHEAL_master/UHEAL/UHEAL_data/scraped/uheal_data_table/uheal_data.mat')
 %this_dir = cd;
@@ -70,7 +76,7 @@ uheal_data.CP_new = uheal_data.CP_new';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % subgroup CP for more strict analysis
 % all thresholds from .25-8kHz -5 db HL=><=15 dB HL 
-CP_SG = double(mean(aud(:,1:6),2)<=20 & ...
+CP_SG = double(nanmean(aud(:,1:6),2)<=20 & ...
     all(aud(:,1:6)<=15,2) & ...
     all(aud(:,1:6)>=-5,2));
 uheal_data.CP_SG = CP_SG;

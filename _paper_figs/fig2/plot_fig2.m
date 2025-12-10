@@ -82,7 +82,19 @@ abr_sub_trace.gender = gender';
 
 
 %save('/work3/jonmarc/UHEAL_paper/_eeg/_ABR/_outputs/abr_data_table/abr_sub_trace','-struct','abr_sub_trace')
+%% find rejected per group (review)
+abr_data_tmp = abr_data;
+abr_data_tmp.age = age';
+abr_data_tmp.rjt_sub = rjt_sub';
+abr_data_tmp.CP = uheal_data.CP_new;
+abr_data_reject = IndexedStructCopy(abr_data_tmp,find(~abr_sub_trace.CP))
 
+rjt_Y = length(find(abr_data_reject.age<=25 & ~abr_data_reject.CP & abr_data_reject.rjt_sub));
+rjt_M = length(find(abr_data_reject.age>25 & abr_data_reject.age<50 & ~abr_data_reject.CP & abr_data_reject.rjt_sub));
+rjt_O = length(find(abr_data_reject.age>=50 & ~abr_data_reject.CP & abr_data_reject.rjt_sub));
+
+clc
+disp(['Rejected subjects per group: Y=' num2str(rjt_Y) ', M=' num2str(rjt_M) ', O=' num2str(rjt_O)])
 %% get groups
 
 close all
@@ -104,7 +116,10 @@ sub_abr_group{3} = sub_abr_ONH;
 abr_data_nh = IndexedStructCopy(abr_data,find(~abr_sub_trace.CP & ~abr_sub_trace.rjt_sub));
 
 [fig5a]=plot_abr_group(abr_sub_trace.t_abr(:,1)',sub_abr_group,abr_data)
-saveas(fig5a,[savepath 'abr_grouped'],'svg')
+%saveas(fig5a,[savepath 'abr_grouped'],'svg')
+
+
+
 
 
 %% Stats

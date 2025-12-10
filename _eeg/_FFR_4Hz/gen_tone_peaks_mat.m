@@ -102,7 +102,11 @@ for ss=1:size(data_all,1)
             [p_fix_s(pp),p_l] = min(this_mean(this_t));
         end
         % convert to time
-        p_fix_s_l(pp) = mean_time(this_t(p_l));
+        if isnan(p_fix_s(pp))
+            p_fix_s_l(pp) = nan;
+        else
+            p_fix_s_l(pp) = mean_time(this_t(p_l));
+        end
     end
 
     % loop over tones
@@ -122,11 +126,21 @@ for ss=1:size(data_all,1)
                 [p_max(ss,ii,pp),p_l] = min(data_all(ss,this_t));
             end
             % convert index to time
-            p_max_l(ss,ii,pp) = time_TS(this_t(p_l));
+            if isnan(p_max(ss,ii,pp))
+                p_max_l(ss,ii,pp) = nan;
+            else
+                p_max_l(ss,ii,pp) = time_TS(this_t(p_l));
+            end
 
             % fixed latency based on mean over all tones
-            p_fix(ss,ii,pp) = data_all(ss,find(time_TS==p_fix_s_l(pp)+0.5*(ii-1)));
-            p_fix_l(ss,ii,pp) = p_fix_s_l(pp)+0.5*(ii-1);
+           
+            if isnan(p_fix_s_l(pp))
+                p_fix_l(ss,ii,pp) = nan;
+                p_fix(ss,ii,pp) = nan;
+            else
+                p_fix(ss,ii,pp) = data_all(ss,find(time_TS==p_fix_s_l(pp)+0.5*(ii-1)));
+                p_fix_l(ss,ii,pp) = p_fix_s_l(pp)+0.5*(ii-1);
+            end
 
 
 

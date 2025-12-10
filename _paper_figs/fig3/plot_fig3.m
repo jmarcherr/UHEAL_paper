@@ -188,18 +188,18 @@ figure
 
 [h,ax1,ax2]=stat_plots_uh_age_pt(data_ffr,var,labels,lims)
 
-scatter(uheal_data.Age(find(uheal_data.FFR_sig==0 & uheal_data.gender==1)),uheal_data.FFR_SNR(find(uheal_data.FFR_sig==0 & uheal_data.gender==1)),'ko','markeredgecolor',[0.3 0.3 0.3],'SizeData',10,'linewidth',1)
-scatter(uheal_data.Age(find(uheal_data.FFR_sig==0 & uheal_data.gender==2)),uheal_data.FFR_SNR(find(uheal_data.FFR_sig==0 & uheal_data.gender==2)),'ko','markeredgecolor',[0.3 0.3 0.3],'SizeData',10,'linewidth',1)
+scatter(uheal_data.Age(find(uheal_data.FFR_sig==0 & uheal_data.gender==1 & ~uheal_data.CP_new)),uheal_data.FFR_SNR(find(uheal_data.FFR_sig==0 & uheal_data.gender==1 & ~uheal_data.CP_new)),'ko','markeredgecolor',[0.3 0.3 0.3],'SizeData',10,'linewidth',1)
+scatter(uheal_data.Age(find(uheal_data.FFR_sig==0 & uheal_data.gender==2 & ~uheal_data.CP_new)),uheal_data.FFR_SNR(find(uheal_data.FFR_sig==0 & uheal_data.gender==2 & ~uheal_data.CP_new)),'ko','markeredgecolor',[0.3 0.3 0.3],'SizeData',10,'linewidth',1)
 %set(gcf,'position',[100 100 297 199]*(96/72))
 set(gcf,'position',[483 219 396 320])
 %set(hleg,'Visible','off')
 fig = gcf;
-saveas(fig,[savepath 'FFR_corr_age'],'svg')
+%saveas(fig,[savepath 'FFR_corr_age'],'svg')
 
 % small size for ABR FFR combined figure
 set(gcf,'position',[100 100 297 169]*(96/72))
 fig = gcf;
-saveas(fig,[savepath 'FFR_corr_age_small'],'svg')
+%saveas(fig,[savepath 'FFR_corr_age_small'],'svg')
 
 %%
 function c=jm_topoplot(var1,zlim,tit_string,coff)
